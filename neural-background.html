@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Neural background demo</title>
+  <style>
+    html, body { margin: 0; height: 100%; background: #fbfaf8; color: #2b2824;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+
+    /* The background: fixed, full-screen, never blocks clicks. */
+    #neural-bg { position: fixed; inset: 0; width: 100vw; height: 100vh;
+      z-index: 0; pointer-events: none; display: block; }
+    /* Page content sits above it. */
+    main { position: relative; z-index: 1; }
+
+    main { min-height: 100%; display: grid; place-content: center; text-align: center; padding: 2rem; }
+    h1 { font-weight: 500; letter-spacing: -0.02em; font-size: clamp(2rem, 5vw, 3.5rem); margin: 0 0 .5rem; }
+    p  { color: #8c857b; margin: 0; }
+  </style>
+</head>
+<body>
+  <canvas id="neural-bg" aria-hidden="true"></canvas>
+
+  <main>
+    <h1>Your Name</h1>
+    <p>Move your cursor around — click to send a burst.</p>
+  </main>
+
+  <script>
+/*!
+ * neural-bg.js — a minimalist, cursor-reactive neural network background.
+ * No dependencies. Usage:
+ *   <canvas id="neural-bg"></canvas>
+ *   <script src="neural-bg.js"><\/script>
+ *   <script>NeuralBackground.create('#neural-bg', { /* options *\/ });<\/script>
+ */
+(function (global) {
+  'use strict';
+
+  var DEFAULTS = {
+    background: '#fbfaf8',          // canvas fill; set to null for transparent
+    idleColor: [190, 187, 182],     // RGB of resting nodes / lines
+    activeColor: [118, 106, 92],    // RGB of lit nodes / signals
+    lineAlpha: 0.22,                // opacity of resting lines
+    nodeAlpha: 0.85,                // opacity of resting nodes
+    grid: 112,                      // grid cell size in px (0 = no grid)
+    gridColor: '#f2f0ec',
+    layerGap: 210,                  // approx px between layers (columns)
+    nodeGap: 150,                   // approx px between nodes in a layer
+    connections: 2,                 // edges from each node to the next layer
+    radius: 170,                    // cursor influence radius (px)
+    pull: 0.18,                     // how much nodes lean toward the cursor (0–1)
+    drift: 5,                       // idle wobble amplitude (px)
+    pulseSpeed: 0.28,               // signal speed (px per ms)
+    fireThreshold: 0.55,            // activation needed for a node to fire
+    falloff: 0.9,                   // signal strength kept per hop
+    ambient: 1400,                  // avg ms between spontaneous signals (0 = off)
+    maxPulses: 260                  // safety cap on live signals
+  };
+
+  function create(target, options) {
+    var cfg = Object.assign({}, DEFAULTS, options || {});
+    var canvas = typeof target === 'string' ? document.querySelector(target) : target;
+    if (!canvas) throw new Error('NeuralBackground: canvas not found');
+    var ctx = canvas.getContext('2d');
+    var reduced = !!(global.matchMedia && global.matchMedia('(prefers-reduced-motion: reduce)').matches);
+
+    var W = 0, H = 0;
+    var nodes = [], edges = [], pulses = [];
+    var mouse = { x: 0, y: 0, sx: 0, sy: 0, on: false, strength: 0 };
+    var raf = 0, last = 0, ambientT = 0, resizeTimer = 0;
+
+    function rgba(c, a) {
+      return 'rgba(' + (c[0] | 0) + ',' + (c[1] | 0) + ',' + (c[2] | 0) + ',' + a.toFixed(3) + ')';
+    }
+    function mix(a, b, t) {
+      return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
+    }
+
+    // ---- Build the network -------------------------------------------------
+    function build() {
+      var rect = canvas.getBoundingClientRect();
+      W = rect.width; H = rect.height;
+      var dpr = Math.min(global.devicePixelRatio || 1, 2);
+      canvas.width = Math.round(W * dpr);
+      canvas.height = Math.round(H * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      nodes = []; edges = []; pulses = [];
+      var layerCount = Math.max(3, Math.round(W / cfg.layerGap) + 1);
+      var gapX = W / (layerCount - 1);
+      var base = Math.max(2, Math.round(H / cfg.nodeGap));
+      var layers = [];
+
+      for (var l = 0; l < layerCount; l++) {
+        var count = Math.max(2, base + Math.round((Math.random() * 2 - 1) * base * 0.25));
+        var gapY = H / count;
+        var layer = [];
+        for (var i = 0; i < count; i++) {
+          var n = {
+            bx: l * gapX + (Math.random() - 0.5) * gapX * 0.35,
+            by: (i + 0.5) * gapY + (Math.random() - 0.5) * gapY * 0.5,
+            x: 0, y: 0,
+            phase: Math.random() * Math.PI * 2,
+            speed: 0.6 + Math.random() * 0.8,
+            act: 0, prox: 0, cool: 0, out: []
+          };
+          n.x = n.bx; n.y = n.by;
+          layer.push(n); nodes.push(n);
+        }
+        layers.push(layer);
+      }
+
+      // Connect each node to its nearest neighbours in the next layer.
+      for (var l2 = 0; l2 < layers.length - 1; l2++) {
+        var next = layers[l2 + 1];
+        layers[l2].forEach(function (a) {
+          var sorted = next.slice().sort(function (p, q) {
+            return Math.abs(p.by - a.by) - Math.abs(q.by - a.by);
+          });
+          var k = Math.min(next.length, cfg.connections + (Math.random() < 0.3 ? 1 : 0));
+          for (var j = 0; j < k; j++) {
+            var e = { a: a, b: sorted[j], w: 0.75 + Math.random() * 0.25, act: 0 };
+            a.out.push(e); edges.push(e);
+          }
+        });
+      }
+    }
+
+    // ---- Signals -----------------------------------------------------------
+    function fire(n, strength, fanout) {
+      n.cool = 500 + Math.random() * 700;
+      var outs = n.out;
+      if (fanout && fanout < outs.length) {
+        outs = outs.slice().sort(function () { return Math.random() - 0.5; }).slice(0, fanout);
+      }
+      for (var i = 0; i < outs.length && pulses.length < cfg.maxPulses; i++) {
+        var e = outs[i];
+        pulses.push({
+          e: e, t: 0, s: strength * e.w,
+          len: Math.max(1, Math.hypot(e.b.bx - e.a.bx, e.b.by - e.a.by))
+        });
+      }
+    }
+
+    // ---- Frame loop --------------------------------------------------------
+    function frame(now) {
+      raf = global.requestAnimationFrame(frame);
+      var dt = Math.min(50, now - (last || now));
+      last = now;
+
+      var mk = 1 - Math.exp(-dt / 70);
+      mouse.sx += (mouse.x - mouse.sx) * mk;
+      mouse.sy += (mouse.y - mouse.sy) * mk;
+      mouse.strength += ((mouse.on ? 1 : 0) - mouse.strength) * (1 - Math.exp(-dt / 250));
+
+      var R = cfg.radius, R2 = R * R;
+      var decay = Math.exp(-dt / 450);
+      var i, n;
+
+      // Nodes: drift, lean toward the cursor, light up by proximity.
+      for (i = 0; i < nodes.length; i++) {
+        n = nodes[i];
+        var dx = mouse.sx - n.bx, dy = mouse.sy - n.by;
+        var d2 = dx * dx + dy * dy, f = 0;
+        if (d2 < R2 && mouse.strength > 0.001) {
+          f = 1 - Math.sqrt(d2) / R;
+          f = f * f * (3 - 2 * f) * mouse.strength; // smoothstep
+        }
+        n.prox = f;
+        var ox = reduced ? 0 : Math.sin(now * 0.0005 * n.speed + n.phase) * cfg.drift;
+        var oy = reduced ? 0 : Math.cos(now * 0.0004 * n.speed + n.phase * 1.3) * cfg.drift;
+        n.x = n.bx + ox + dx * f * cfg.pull;
+        n.y = n.by + oy + dy * f * cfg.pull;
+        n.act = Math.max(n.act * decay, f);
+        n.cool -= dt;
+        if (!reduced && n.cool <= 0 && n.out.length && n.act > cfg.fireThreshold) {
+          // Nodes under the cursor fire on every edge; relayed signals branch less.
+          fire(n, n.act, n.prox > cfg.fireThreshold ? 0 : 1 + (Math.random() < 0.5 ? 1 : 0));
+        }
+      }
+
+      // Spontaneous background activity so the net never looks dead.
+      if (cfg.ambient && !reduced && nodes.length) {
+        ambientT -= dt;
+        if (ambientT <= 0) {
+          ambientT = cfg.ambient * (0.5 + Math.random());
+          n = nodes[(Math.random() * nodes.length) | 0];
+          if (n.out.length) { n.act = Math.max(n.act, 0.8); fire(n, 0.85, 2); }
+        }
+      }
+
+      // Advance signals.
+      var move = cfg.pulseSpeed * dt;
+      for (i = pulses.length - 1; i >= 0; i--) {
+        var p = pulses[i];
+        p.t += move / p.len;
+        if (p.s > p.e.act) p.e.act = p.s;
+        if (p.t >= 1) {
+          var b = p.e.b, s = p.s * cfg.falloff;
+          if (s > b.act) b.act = s;
+          pulses[i] = pulses[pulses.length - 1];
+          pulses.pop();
+        }
+      }
+      var edgeDecay = Math.exp(-dt / 350);
+      for (i = 0; i < edges.length; i++) edges[i].act *= edgeDecay;
+
+      draw();
+    }
+
+    function draw() {
+      var A = cfg.activeColor, I = cfg.idleColor, i;
+      ctx.globalCompositeOperation = 'source-over';
+      if (cfg.background) { ctx.fillStyle = cfg.background; ctx.fillRect(0, 0, W, H); }
+      else ctx.clearRect(0, 0, W, H);
+
+      // Faint grid.
+      if (cfg.grid > 0) {
+        ctx.strokeStyle = cfg.gridColor;
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        var g0 = (W % cfg.grid) / 2, gx, gy;
+        for (gx = g0; gx < W; gx += cfg.grid) { ctx.moveTo(Math.round(gx) + 0.5, 0); ctx.lineTo(Math.round(gx) + 0.5, H); }
+        g0 = (H % cfg.grid) / 2;
+        for (gy = g0; gy < H; gy += cfg.grid) { ctx.moveTo(0, Math.round(gy) + 0.5); ctx.lineTo(W, Math.round(gy) + 0.5); }
+        ctx.stroke();
+      }
+
+      // Edges: resting ones in one batch, lit ones individually.
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = rgba(I, cfg.lineAlpha);
+      ctx.beginPath();
+      var lit = [];
+      for (i = 0; i < edges.length; i++) {
+        var e = edges[i];
+        var h = Math.max(e.act, (e.a.prox + e.b.prox) * 0.5);
+        if (h < 0.02) { ctx.moveTo(e.a.x, e.a.y); ctx.lineTo(e.b.x, e.b.y); }
+        else lit.push(e, h);
+      }
+      ctx.stroke();
+      for (i = 0; i < lit.length; i += 2) {
+        var le = lit[i], lh = Math.min(1, lit[i + 1]);
+        ctx.strokeStyle = rgba(mix(I, A, lh), cfg.lineAlpha + lh * (0.75 - cfg.lineAlpha));
+        ctx.beginPath(); ctx.moveTo(le.a.x, le.a.y); ctx.lineTo(le.b.x, le.b.y); ctx.stroke();
+      }
+
+      // Signals: a small dot with a short fading tail.
+      ctx.lineWidth = 1.5;
+      for (i = 0; i < pulses.length; i++) {
+        var p = pulses[i], a = p.e.a, b = p.e.b;
+        var t = Math.min(1, p.t), t0 = Math.max(0, t - 36 / p.len);
+        var x = a.x + (b.x - a.x) * t, y = a.y + (b.y - a.y) * t;
+        var x0 = a.x + (b.x - a.x) * t0, y0 = a.y + (b.y - a.y) * t0;
+        var tg = ctx.createLinearGradient(x0, y0, x, y);
+        tg.addColorStop(0, rgba(A, 0));
+        tg.addColorStop(1, rgba(A, 0.8 * p.s));
+        ctx.strokeStyle = tg;
+        ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x, y); ctx.stroke();
+        ctx.fillStyle = rgba(A, 0.9 * p.s);
+        ctx.beginPath(); ctx.arc(x, y, 1.4, 0, 6.2832); ctx.fill();
+      }
+
+      // Nodes: darken and grow slightly when active.
+      for (i = 0; i < nodes.length; i++) {
+        var m = nodes[i], c = Math.min(1, m.act);
+        ctx.fillStyle = rgba(mix(I, A, c), cfg.nodeAlpha + (1 - cfg.nodeAlpha) * c);
+        ctx.beginPath(); ctx.arc(m.x, m.y, 1.6 + 1.6 * c, 0, 6.2832); ctx.fill();
+      }
+    }
+
+    // ---- Input -------------------------------------------------------------
+    function local(e) {
+      var r = canvas.getBoundingClientRect();
+      return [e.clientX - r.left, e.clientY - r.top];
+    }
+    function onMove(e) {
+      var pt = local(e);
+      if (!mouse.on && mouse.strength < 0.05) { mouse.sx = pt[0]; mouse.sy = pt[1]; }
+      mouse.x = pt[0]; mouse.y = pt[1]; mouse.on = true;
+    }
+    function onDown(e) {
+      onMove(e);
+      if (reduced) return;
+      var pt = local(e), R2 = cfg.radius * cfg.radius;
+      nodes.forEach(function (n) {
+        var dx = n.bx - pt[0], dy = n.by - pt[1];
+        if (dx * dx + dy * dy < R2 && n.out.length) { n.act = 1; fire(n, 1, 0); }
+      });
+    }
+    function onUp(e) { if (e.pointerType && e.pointerType !== 'mouse') mouse.on = false; }
+    function onOut(e) { if (!e.relatedTarget) mouse.on = false; }
+    function onBlur() { mouse.on = false; }
+    function onResize() {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(build, 150);
+    }
+
+    global.addEventListener('pointermove', onMove, { passive: true });
+    global.addEventListener('pointerdown', onDown, { passive: true });
+    global.addEventListener('pointerup', onUp, { passive: true });
+    global.addEventListener('pointercancel', onUp, { passive: true });
+    document.addEventListener('mouseout', onOut);
+    global.addEventListener('blur', onBlur);
+    var ro = global.ResizeObserver ? new ResizeObserver(onResize) : null;
+    if (ro) ro.observe(canvas); else global.addEventListener('resize', onResize);
+
+    build();
+    raf = global.requestAnimationFrame(frame);
+
+    return {
+      rebuild: build,
+      destroy: function () {
+        global.cancelAnimationFrame(raf);
+        clearTimeout(resizeTimer);
+        global.removeEventListener('pointermove', onMove);
+        global.removeEventListener('pointerdown', onDown);
+        global.removeEventListener('pointerup', onUp);
+        global.removeEventListener('pointercancel', onUp);
+        document.removeEventListener('mouseout', onOut);
+        global.removeEventListener('blur', onBlur);
+        if (ro) ro.disconnect(); else global.removeEventListener('resize', onResize);
+      }
+    };
+  }
+
+  global.NeuralBackground = { create: create, defaults: DEFAULTS };
+})(window);
+
+</script>
+  <script>
+    NeuralBackground.create('#neural-bg', {
+      // Tweak freely — see DEFAULTS at the top of neural-bg.js for everything.
+      // background: null,              // transparent, if you want a CSS background instead
+      // grid: 0,                       // hide the grid
+      // activeColor: [176, 120, 80],   // e.g. warmer terracotta highlights
+
+      // Dark preset (the original look):
+      // background: '#0a0c10', gridColor: '#11141a', idleColor: [110, 122, 145],
+      // activeColor: [125, 211, 252], lineAlpha: 0.07, nodeAlpha: 0.35,
+    });
+  </script>
+</body>
+</html>

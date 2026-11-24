@@ -2,7 +2,7 @@ import styles from "./page.module.css";
 import Image from "next/image";
 import Link from "next/link";
 import CallToActionLinks from "@/app/CallToActionLinks/CallToActionLinks";
-import NodeField from "@/app/ornaments/NodeField";
+import NeuralBackground from "@/app/ornaments/NeuralBackground";
 
 export const metadata = {
   title: "AI Safety Group @ UChicago XLab",
@@ -40,14 +40,8 @@ export default function Home() {
   return (
     <>
       <section className={styles.hero}>
-        <NodeField side="right" />
+        <NeuralBackground />
         <div className={styles.heroInner}>
-          <h1 className={styles.heroTitle}>
-            UChicago&#39;s student-led initiative to{" "}
-            <em className={styles.heroAccent}>
-              shape the future of AI safety.
-            </em>
-          </h1>
           <p className={styles.heroLede}>
             We are a community of undergraduate and graduate students working to
             reduce risks from advanced AI and steer its development toward
