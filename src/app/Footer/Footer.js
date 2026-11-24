@@ -10,25 +10,26 @@ const Footer = () => {
         <div className={styles.main}>
           <div className={styles.brand}>
             <div className={styles.brandGroup}>
-              <span className={styles.brandText}>
-                <span className={styles.brandName}>AI Safety Group</span>
-                <span>@ UChicago XLab</span>
-              </span>
+              <Link href="/" aria-label="AI Safety Group home">
+                <Image
+                  src="/lockup1_red.png"
+                  alt="AI Safety Group at UChicago XLab"
+                  width={1731}
+                  height={380}
+                  priority
+                  className={styles.footerLockupLight}
+                />
+                <Image
+                  src="/lockup1_white.png"
+                  alt="AI Safety Group at UChicago XLab"
+                  width={1731}
+                  height={379}
+                  priority
+                  className={styles.footerLockupDark}
+                />
+              </Link>
             </div>
             <p className={styles.location}>University of Chicago · Chicago, IL</p>
-            <a
-              href="https://xrisk.uchicago.edu/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className={styles.xlabLink}>
-              <Image
-                src="/x-lab-logo.png"
-                alt="Existential Risk Laboratory logo"
-                width={853 * 0.22}
-                height={293 * 0.22}
-                className={`${styles.xlabLogo} dark-invert-hue`}
-              />
-            </a>
           </div>
 
           <div className={styles.columns}>

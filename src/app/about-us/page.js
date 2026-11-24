@@ -1,8 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import styles from "./page.module.css";
-import NodeField from "@/app/ornaments/NodeField";
-import GridFade from "@/app/ornaments/GridFade";
+import NeuralBackground from "@/app/ornaments/NeuralBackground";
 
 // `invert` marks dark-on-transparent logos that flip to light silhouettes in
 // dark mode; logos with their own dark backgrounds stay as they are.
@@ -15,7 +14,6 @@ const alumniOrgs = [
   { name: "AI Futures Project", src: "/ai_futures_project_logo.jpg", href: "https://www.aifutures.org" },
   { name: "Gray Swan", src: "/gray-swan-og-image.png", href: "https://www.grayswan.ai" },
   { name: "Epoch AI", src: "/epoch.png", href: "https://epoch.ai", invert: true },
-  { name: "New York State Assembly", src: "/nys-assembly-seal.png", href: "https://assembly.state.ny.us/mem/Alex-Bores" },
 ];
 
 export const metadata = {
@@ -27,52 +25,37 @@ export const metadata = {
 export default function AboutUs() {
   return (
     <div className={styles.pageWrap}>
-      <GridFade />
-      <NodeField />
+      <NeuralBackground transparent clearWidth={860} />
       <div className={styles.aboutContainer}>
         <header className={styles.pageHeader}>
-        <p className={styles.eyebrow}>Who We Are</p>
         <h1 className={styles.pageTitle}>About Us</h1>
       </header>
 
       <section className={styles.section}>
         <h2 className={styles.sectionTitle}>AI Safety Group @ UChicago XLab</h2>
         <p className={styles.bodyText}>
-          The AI Safety Group @ UChicago XLab is a student group affiliated with the{" "}
+          We are a student organization affiliated with the University of Chicago's{" "}
           <a
             href="https://xrisk.uchicago.edu/"
             target="_blank"
             rel="noopener noreferrer"
             className={styles.inlineLink}>
-            Existential Risk Laboratory
-          </a>
-          , dedicated to education and research in AI safety — the crucial challenge of mitigating
-          risks that arise from advanced AI and ensuring that it is developed in a way that benefits
-          humanity. As AI becomes more capable, it becomes increasingly important to ensure that AI
-          systems are aligned with human values, that bad actors cannot misuse AI for harmful ends,
-          and that power does not become concentrated in the hands of a few. As AI systems are integrated into a growing number of
-          critical domains and societal functions, misaligned AI could pose significant risks,
-          ranging from unintended effects to potentially existential consequences. Our group aims to
-          contribute to this vital field by:
+            Existential Risk Laboratory 
+          </a> dedicated to fostering education, research, and discourse in AI safety. The advent of extraordinarily advanced AI places human civilization at an unprecedented precipice. Ensuring AI systems are aligned with human values, securely deployed, and effectively regulated will likely be the most consequential issue faced in our lifetimes. To best equip students to contribute to these goals, our work comprises three main components: 
         </p>
         <ul className={styles.bodyList}>
           <li>
-            Providing rigorous education and fostering critical thought by exposing members to
-            diverse perspectives on this transformative technology.
+            Running quarterly fellowship programs across AI safety, security, strategy, and governance
           </li>
           <li>
-            Producing high-quality research and analysis that moves the needle on AI safety and
-            builds the foundation for high-impact careers in the field.
+            Organizing talks, symposia, and community events 
           </li>
           <li>
-            Cultivating a vibrant, supportive community that connects motivated students to the vital
-            field of AI safety.
+            Supporting and funding student-led research projects 
           </li>
         </ul>
         <p className={styles.bodyText}>
-          By fostering the next generation of AI researchers and ethicists, we strive to make a
-          lasting impact on the future, working towards a world where advanced AI systems benefit
-          all of humanity.
+          
         </p>
       </section>
 
@@ -82,12 +65,10 @@ export default function AboutUs() {
           Founded in 2022 at the University of Chicago, the Existential Risk Laboratory (XLab) is an
           interdisciplinary research organization dedicated to the analysis and mitigation of risks
           that threaten human civilization&apos;s long-term survival. XLab focuses on critically
-          under-addressed areas: AI safety, biorisk, nuclear security, and extreme climate change,
-          recognizing the urgent need for more expertise and innovative thinking in these fields.
+          under-addressed areas, including AI safety and security, biorisks, nuclear security, and extreme climate change.
           Since these issues don&apos;t fit neatly into pre-existing academic silos, XLab was
           created to serve as a coordinating locus for work on existential and global catastrophic
-          risk on the UChicago campus, bringing together scholars from across the academy. It
-          supports direct research and provides a venue for students to build expertise in its focus
+          risk on the UChicago campus. It supports direct research and provides a venue for students to build expertise in its focus
           areas.
         </p>
       </section>

@@ -7,162 +7,176 @@ import styles from "./Header.module.css";
 import ThemeToggle from "./ThemeToggle";
 
 const navItems = [
-  { label: "About Us", href: "/about-us" },
+	{ label: "About Us", href: "/about-us" },
+	{
+		label: "Fellowships",
+		href: "/fellowships",
+		children: [
+			{ label: "AI Safety Fundamentals", href: "/ai-safety-fundamentals" },
+			{ label: "Policy & Governance", href: "/policy-governance" },
+			{
+				label: "Economics of Transformative AI",
+				href: "/economics-of-transformative-ai",
+			},
+			{ label: "Strategy & Forecasting", href: "/strategy-group" },
+		],
+	},
   { label: "Research", href: "/research" },
-  {
-    label: "Fellowships",
-    href: "/fellowships",
-    children: [
-      { label: "AI Safety Fundamentals", href: "/ai-safety-fundamentals" },
-      { label: "Policy & Governance", href: "/policy-governance" },
-      { label: "Economics of Transformative AI", href: "/economics-of-transformative-ai" },
-      { label: "Strategy & Forecasting", href: "/strategy-group" },
-    ],
-  },
-  { label: "Events", href: "/events" },
-  { label: "Leadership", href: "/leadership" },
+	{ label: "Events", href: "/events" },
+  { label: "Resources", href: "/events" },
+	{ label: "Leadership", href: "/leadership" },
 ];
 
 const Header = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const pathname = usePathname();
+	const [isMenuOpen, setIsMenuOpen] = useState(false);
+	const pathname = usePathname();
 
-  useEffect(() => {
-    setIsMenuOpen(false);
-  }, [pathname]);
+	useEffect(() => {
+		setIsMenuOpen(false);
+	}, [pathname]);
 
-  useEffect(() => {
-    if (isMenuOpen) {
-      document.body.classList.add("menu-open");
-    } else {
-      document.body.classList.remove("menu-open");
-    }
+	useEffect(() => {
+		if (isMenuOpen) {
+			document.body.classList.add("menu-open");
+		} else {
+			document.body.classList.remove("menu-open");
+		}
 
-    return () => {
-      document.body.classList.remove("menu-open");
-    };
-  }, [isMenuOpen]);
+		return () => {
+			document.body.classList.remove("menu-open");
+		};
+	}, [isMenuOpen]);
 
-  useEffect(() => {
-    if (!isMenuOpen) return;
-    const onKeyDown = (e) => {
-      if (e.key === "Escape") setIsMenuOpen(false);
-    };
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [isMenuOpen]);
+	useEffect(() => {
+		if (!isMenuOpen) return;
+		const onKeyDown = (e) => {
+			if (e.key === "Escape") setIsMenuOpen(false);
+		};
+		window.addEventListener("keydown", onKeyDown);
+		return () => window.removeEventListener("keydown", onKeyDown);
+	}, [isMenuOpen]);
 
-  const isActive = (item) =>
-    pathname === item.href ||
-    (item.children && item.children.some((child) => pathname === child.href));
+	const isActive = (item) =>
+		pathname === item.href ||
+		(item.children && item.children.some((child) => pathname === child.href));
 
-  return (
-    <>
-      <header className={styles.header}>
-        <div className={styles.container}>
-          <Link href="/" className={styles.logoContainer}>
-            <Image
-              src="/lockup1_red.png"
-              alt="AI Safety Group @ UChicago"
-              width={1731}
-              height={380}
-              priority
-              className={`${styles.logo} ${styles.logoLight}`}
-            />
-            <Image
-              src="/lockup1_white.png"
-              alt="AI Safety Group @ UChicago"
-              width={1731}
-              height={379}
-              priority
-              className={`${styles.logo} ${styles.logoDark}`}
-            />
-          </Link>
+	return (
+		<>
+			<header className={styles.header}>
+				<div className={styles.container}>
+					<Link
+						href="/"
+						className={styles.headerHomeMark}
+						aria-label="AI Safety Group home">
+						<Image
+							src="/xlogo.png"
+							alt=""
+							width={32}
+							height={32}
+							priority
+						/>
+					</Link>
+					<nav className={styles.desktopNav} aria-label="Main navigation">
+						<ul className={styles.navList}>
+							{navItems.map((item) => (
+								<li
+									key={item.label}
+									className={`${styles.navItem} ${
+										item.children ? styles.dropdownParent : ""
+									}`}>
+									<Link
+										href={item.href}
+										className={`${styles.navLink} ${
+											isActive(item) ? styles.navLinkActive : ""
+										}`}>
+										{item.label}
+										{item.children && (
+											<span className={styles.caret}>▾</span>
+										)}
+									</Link>
+									{item.children && (
+										<ul className={styles.dropdown}>
+											{item.children.map((child) => (
+												<li key={child.label}>
+													<Link
+														href={child.href}
+														className={styles.dropdownLink}>
+														{child.label}
+													</Link>
+												</li>
+											))}
+										</ul>
+									)}
+								</li>
+							))}
+							<li className={styles.navItem}>
+								<Link
+									href="/get-involved"
+									className={styles.ctaLink}>
+									Get Involved
+								</Link>
+							</li>
+							<li className={styles.navItem}>
+								<div className={styles.headerThemeToggle}>
+									<ThemeToggle />
+								</div>
+							</li>
+						</ul>
+					</nav>
 
-          <nav className={styles.desktopNav} aria-label="Main navigation">
-            <ul className={styles.navList}>
-              {navItems.map((item) => (
-                <li
-                  key={item.label}
-                  className={`${styles.navItem} ${item.children ? styles.dropdownParent : ""}`}>
-                  <Link
-                    href={item.href}
-                    className={`${styles.navLink} ${isActive(item) ? styles.navLinkActive : ""}`}>
-                    {item.label}
-                    {item.children && <span className={styles.caret}>▾</span>}
-                  </Link>
-                  {item.children && (
-                    <ul className={styles.dropdown}>
-                      {item.children.map((child) => (
-                        <li key={child.label}>
-                          <Link href={child.href} className={styles.dropdownLink}>
-                            {child.label}
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </li>
-              ))}
-              <li className={styles.navItem}>
-                <Link href="/get-involved" className={styles.ctaLink}>
-                  Get Involved <span aria-hidden="true">→</span>
-                </Link>
-              </li>
-              <li className={styles.navItem}>
-                <ThemeToggle />
-              </li>
-            </ul>
-          </nav>
+					<button
+						className={`${styles.mobileMenuButton} ${
+							isMenuOpen ? styles.open : ""
+						}`}
+						onClick={() => setIsMenuOpen(!isMenuOpen)}
+						aria-label="Toggle menu"
+						aria-expanded={isMenuOpen}>
+						<span></span>
+						<span></span>
+						<span></span>
+					</button>
+				</div>
+			</header>
 
-          <button
-            className={`${styles.mobileMenuButton} ${isMenuOpen ? styles.open : ""}`}
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            aria-label="Toggle menu"
-            aria-expanded={isMenuOpen}>
-            <span></span>
-            <span></span>
-            <span></span>
-          </button>
-        </div>
-      </header>
-
-      {/* Rendered outside <header>: its backdrop-filter would otherwise trap this
+			{/* Rendered outside <header>: its backdrop-filter would otherwise trap this
           fixed overlay inside the header's box instead of the viewport. */}
-      {isMenuOpen && (
-        <nav className={styles.mobileNav} aria-label="Mobile navigation">
-          <ul className={styles.mobileNavList}>
-            {navItems.map((item) => (
-              <li key={item.label}>
-                <Link href={item.href} className={styles.mobileNavLink}>
-                  {item.label}
-                </Link>
-                {item.children && (
-                  <ul className={styles.mobileSubList}>
-                    {item.children.map((child) => (
-                      <li key={child.label}>
-                        <Link href={child.href} className={styles.mobileSubLink}>
-                          {child.label}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </li>
-            ))}
-            <li>
-              <Link href="/get-involved" className={styles.mobileCtaLink}>
-                Get Involved <span aria-hidden="true">→</span>
-              </Link>
-            </li>
-            <li className={styles.mobileToggleRow}>
-              <ThemeToggle />
-            </li>
-          </ul>
-        </nav>
-      )}
-    </>
-  );
+			{isMenuOpen && (
+				<nav className={styles.mobileNav} aria-label="Mobile navigation">
+					<ul className={styles.mobileNavList}>
+						{navItems.map((item) => (
+							<li key={item.label}>
+								<Link
+									href={item.href}
+									className={styles.mobileNavLink}>
+									{item.label}
+								</Link>
+								{item.children && (
+									<ul className={styles.mobileSubList}>
+										{item.children.map((child) => (
+											<li key={child.label}>
+												<Link
+													href={child.href}
+													className={styles.mobileSubLink}>
+													{child.label}
+												</Link>
+											</li>
+										))}
+									</ul>
+								)}
+							</li>
+						))}
+						<li>
+							<Link
+								href="/get-involved"
+								className={styles.mobileCtaLink}>
+								Get Involved
+							</Link>
+						</li>
+					</ul>
+				</nav>
+			)}
+		</>
+	);
 };
 
 export default Header;

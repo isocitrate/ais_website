@@ -1,6 +1,6 @@
 import styles from "./page.module.css";
-import Image from "next/image";
 import Link from "next/link";
+import Image from "next/image";
 import CallToActionLinks from "@/app/CallToActionLinks/CallToActionLinks";
 import NeuralBackground from "@/app/ornaments/NeuralBackground";
 
@@ -42,38 +42,40 @@ export default function Home() {
       <section className={styles.hero}>
         <NeuralBackground />
         <div className={styles.heroInner}>
+          <div className={styles.heroBrand} aria-label="AI Safety Group at UChicago XLab">
+            <Image
+              src="/lockup1_red.png"
+              alt="AI Safety Group at UChicago XLab"
+              width={1731}
+              height={380}
+              priority
+              className={styles.heroLockupLight}
+            />
+            <Image
+              src="/lockup1_white.png"
+              alt="AI Safety Group at UChicago XLab"
+              width={1731}
+              height={379}
+              priority
+              className={styles.heroLockupDark}
+            />
+          </div>
           <p className={styles.heroLede}>
-            We are a community of undergraduate and graduate students working to
-            reduce risks from advanced AI and steer its development toward
-            better outcomes.
+            We care about reducing risks from advanced
+            AI and ensuring its development remains in the interests of humanity.
           </p>
           <div className={styles.heroCtas}>
             <Link href="/about-us" className={styles.ctaPrimary}>
               Learn more about us <span aria-hidden="true">→</span>
             </Link>
-          </div>
-          <div className={styles.heroAffiliation}>
-            <span>A program created by</span>
-            <a
-              href="https://xrisk.uchicago.edu/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className={styles.xlabLink}
-              aria-label="The University of Chicago's Existential Risk Laboratory"
-            >
-              <Image
-                src="/x-lab-logo.png"
-                alt="The University of Chicago's Existential Risk Laboratory"
-                width={853 * 0.22}
-                height={293 * 0.22}
-                className={`${styles.xlabLogo} dark-invert-hue`}
-              />
-            </a>
+            <Link href="/get-involved" className={styles.ctaPrimary}>
+              Get involved <span aria-hidden="true">→</span>
+            </Link>
           </div>
         </div>
       </section>
 
-      <section className={styles.pillarsSection}>
+      <section className={styles.pillarsSection} hidden>
         <h2 className={styles.sectionTitle}>What we do</h2>
         <div className={styles.pillars}>
           {pillars.map((pillar) => (
@@ -88,7 +90,9 @@ export default function Home() {
         </div>
       </section>
 
-      <CallToActionLinks />
+      <div hidden>
+        <CallToActionLinks />
+      </div>
     </>
   );
 }

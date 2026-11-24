@@ -1,8 +1,7 @@
 import React from "react";
 import FellowshipCard from "./FellowshipCard";
 import styles from "./page.module.css";
-import NodeField from "@/app/ornaments/NodeField";
-import GridFade from "@/app/ornaments/GridFade";
+import NeuralBackground from "@/app/ornaments/NeuralBackground";
 
 export const metadata = {
   title: "Fellowships - AI Safety Group @ UChicago XLab",
@@ -14,19 +13,19 @@ const fellowships = [
   {
     name: "AI Safety Fundamentals",
     description:
-      "Our flagship fellowship introduces fellows from any background to the core ideas in AI safety, with a particular focus on existential risk from advanced AI. By the program's end, fellows will have a working map of the field and the foundation to dive deeper into the subareas that interest them.",
+      "Our flagship fellowship introduces fellows from any background to the core ideas in AI safety, with a particular focus on how advanced AI systems pose critical risks.",
     syllabusHref: "/ai-safety-fundamentals",
   },
   {
     name: "Policy and Governance",
     description:
-      "This track covers the foundations of AI governance: policy frameworks, the differing stances of the US, China, and the EU, threats to democratic institutions, the dynamics of international competition and decoupling, economic and labor impacts, and data privacy. Fellows conclude the program by drafting and defending their own policy briefs. No prior policy experience is required– we welcome students from technical backgrounds looking to build policy literacy, as well as those in the social sciences and humanities engaging with AI-specific governance challenges.",
+      "This fellowship covers the foundations of AI governance, including existing policy frameworks, the differing stances of the US, China, and the EU, threats to democratic institutions posed by AI, the dynamics of international competition, impacts on labor and the economy, and data privacy. At the program's conclusion, fellows draft and defend eir own policy briefs.",
     syllabusHref: "/policy-governance",
   },
   {
     name: "Economics of Transformative AI",
     description:
-      "This fellowship introduces fellows from any background to the major ideas in AI safety and their relationship to economics. Fellows examine how economic incentives shape AI safety decisions, and how those decisions (or their absence) reshape the global economy in turn. By the end of the program, fellows will have a working understanding of how market mechanisms, industrial policy, regulation, and international coordination can meaningfully reduce existential risk, along with the foundation to pursue any of these threads further.",
+      "This fellowship introduces fellows to major ideas in AI safety and their relationship to economics and the economy. Topics include examining how economic incentives shape AI safety decisions, and how those decisions (or their absence) reshape the global economy in turn. By the end of the program, fellows will have a working understanding of how market mechanisms, industrial policy, regulation, and international coordination can meaningfully reduce existential risk, along with the foundation to pursue any of these threads further.",
     syllabusHref: "/economics-of-transformative-ai",
   },
   {
@@ -52,18 +51,15 @@ const fellowships = [
 export default function Fellowships() {
   return (
     <div className={styles.pageWrap}>
-      <GridFade />
-      <NodeField />
+      <NeuralBackground transparent clearWidth={860} />
       <div className={styles.fellowshipsContainer}>
         <header className={styles.pageHeader}>
-          <p className={styles.eyebrow}>Programs</p>
           <h1 className={styles.pageTitle}>Fellowships</h1>
           <p className={styles.pageLede}>
-            Quarter-long reading and discussion groups, open to students from any background. Each
-            track meets weekly with experienced facilitators.
+            Our fellowships are quarter-long weekly reading and discussion groups led by experienced facilitators, and are open to students from any background. Catered dinner is provided!
           </p>
           <p className={styles.pageLede}>
-            Applications for fellowships are currently closed. Please look out for future
+            Applications for fellowships are currently closed. We plan to open applications for Winter 2027 fellowships in early January. Please look out for future
             opportunities through our{" "}
             <a
               href="https://lists.uchicago.edu/web/info/aisafety"

@@ -1,7 +1,6 @@
 import styles from "./page.module.css";
 import LeadershipMember from "./LeadershipMember";
-import NodeField from "@/app/ornaments/NodeField";
-import GridFade from "@/app/ornaments/GridFade";
+import NeuralBackground from "@/app/ornaments/NeuralBackground";
 
 export const metadata = {
   title: "Leadership Team - AI Safety Group @ UChicago XLab",
@@ -82,19 +81,17 @@ const advisors = [
 export default function LeadershipPage() {
   return (
     <div className={styles.pageWrap}>
-      <GridFade />
-      <NodeField clearWidth={1160} />
+      <NeuralBackground transparent clearWidth={860} />
       <div className={styles.leadershipContainer}>
         <header className={styles.pageHeader}>
-        <p className={styles.eyebrow}>Our Team</p>
+        
         <h1 className={styles.pageTitle}>Leadership</h1>
         <p className={styles.pageLede}>
-          Meet the dedicated individuals who lead our AI safety group. We are here to help you
-          through your AI safety journey — if you have any questions, we&apos;d love to hear from
+          If you have any questions, suggestions, or would just like to chat, reach out! We&apos;d love to hear from
           you.
         </p>
         <p className={styles.pageLede}>
-          Applications for leadership roles are currently closed. Please look out for future
+          Applications for leadership roles are currently closed; look out for future
           opportunities through our{" "}
           <a
             href="https://lists.uchicago.edu/web/info/aisafety"
@@ -119,21 +116,51 @@ export default function LeadershipPage() {
       <section className={styles.section}>
         <h2 className={styles.sectionTitle}>Organizers &amp; Leads — Autumn &apos;26</h2>
         <div className={styles.teamGrid}>
-          {autumnTeams.map(({ team, groups }) => (
-            <div key={team} className={styles.teamCard}>
-              <h3 className={styles.teamName}>{team}</h3>
-              {groups.map(({ role, members }) => (
-                <div key={role} className={styles.teamGroup}>
-                  <p className={styles.simpleRole}>{role}</p>
-                  <ul className={styles.teamMembers}>
-                    {members.map((name) => (
-                      <li key={name}>{name}</li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
-          ))}
+          <div className={styles.teamColumn}>
+            {autumnTeams.slice(0, 1).map(({ team, groups }) => (
+              <div key={team} className={styles.teamCard}>
+                <h3 className={styles.teamName}>{team}</h3>
+                {groups.map(({ role, members }) => (
+                  <div key={role} className={styles.teamGroup}>
+                    <p className={styles.simpleRole}>{role}</p>
+                    <ul className={styles.teamMembers}>
+                      {members.map((name) => <li key={name}>{name}</li>)}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+          <div className={styles.teamColumn}>
+            {autumnTeams.slice(1, 2).map(({ team, groups }) => (
+              <div key={team} className={styles.teamCard}>
+                <h3 className={styles.teamName}>{team}</h3>
+                {groups.map(({ role, members }) => (
+                  <div key={role} className={styles.teamGroup}>
+                    <p className={styles.simpleRole}>{role}</p>
+                    <ul className={styles.teamMembers}>
+                      {members.map((name) => <li key={name}>{name}</li>)}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+          <div className={styles.teamColumn}>
+            {autumnTeams.slice(2).map(({ team, groups }) => (
+              <div key={team} className={styles.teamCard}>
+                <h3 className={styles.teamName}>{team}</h3>
+                {groups.map(({ role, members }) => (
+                  <div key={role} className={styles.teamGroup}>
+                    <p className={styles.simpleRole}>{role}</p>
+                    <ul className={styles.teamMembers}>
+                      {members.map((name) => <li key={name}>{name}</li>)}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 

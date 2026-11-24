@@ -1,7 +1,6 @@
 import React from "react";
 import styles from "./page.module.css";
-import NodeField from "@/app/ornaments/NodeField";
-import GridFade from "@/app/ornaments/GridFade";
+import NeuralBackground from "@/app/ornaments/NeuralBackground";
 
 export const metadata = {
   title: "Strategy and Forecasting - AI Safety Group @ UChicago XLab",
@@ -191,11 +190,10 @@ const weeklyContent = [
 export default function StrategyGroup() {
   return (
     <div className={styles.pageWrap}>
-      <GridFade />
-      <NodeField />
+      <NeuralBackground transparent clearWidth={860} />
       <div className={styles.strategyContainer}>
       <header className={styles.pageHeader}>
-        <p className={styles.eyebrow}>Fellowship Syllabus</p>
+        
         <h1 className={styles.pageTitle}>Strategy and Forecasting</h1>
         <p className={styles.pageLede}>
           As frontier models grow more capable and the cost of frontier-level performance continues

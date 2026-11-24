@@ -1,7 +1,6 @@
 import React from "react";
 import styles from "./page.module.css";
-import NodeField from "@/app/ornaments/NodeField";
-import GridFade from "@/app/ornaments/GridFade";
+import NeuralBackground from "@/app/ornaments/NeuralBackground";
 
 export const metadata = {
   title: "Economics of Transformative AI - AI Safety Group @ UChicago XLab",
@@ -123,11 +122,10 @@ const weeklyReadings = [
 export default function EconomicsOfTransformativeAI() {
   return (
     <div className={styles.pageWrap}>
-      <GridFade />
-      <NodeField />
+      <NeuralBackground transparent clearWidth={860} />
       <div className={styles.fellowshipContainer}>
         <header className={styles.pageHeader}>
-          <p className={styles.eyebrow}>Fellowship Syllabus</p>
+          
           <h1 className={styles.pageTitle}>Economics of Transformative AI</h1>
           <p className={styles.pageLede}>
             As artificial intelligence advances, companies and countries face economic pressures to

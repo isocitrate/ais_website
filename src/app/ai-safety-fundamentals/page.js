@@ -1,7 +1,6 @@
 import React from "react";
 import styles from "./page.module.css";
-import NodeField from "@/app/ornaments/NodeField";
-import GridFade from "@/app/ornaments/GridFade";
+import NeuralBackground from "@/app/ornaments/NeuralBackground";
 
 export const metadata = {
   title: "XLab AI Safety Fundamentals",
@@ -332,11 +331,10 @@ const weeklyReadings = [
 export default function Fellowship() {
   return (
     <div className={styles.pageWrap}>
-      <GridFade />
-      <NodeField />
+      <NeuralBackground transparent clearWidth={860} />
       <div className={styles.fellowshipContainer}>
       <header className={styles.pageHeader}>
-        <p className={styles.eyebrow}>Fellowship Syllabus</p>
+        
         <h1 className={styles.pageTitle}>AI Safety Fundamentals</h1>
         <p className={styles.pageLede}>
           Our flagship fellowship introduces fellows from any background to the core ideas in AI

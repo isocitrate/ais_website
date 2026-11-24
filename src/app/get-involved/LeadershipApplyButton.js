@@ -8,7 +8,7 @@ export default function LeadershipApplyButton() {
   return (
     <>
       <button className={styles.actionButton} onClick={() => setShowMessage(!showMessage)}>
-        Apply for Leadership
+        Apply for leadership
       </button>
       {showMessage && (
         <p className={styles.applyMessage}>

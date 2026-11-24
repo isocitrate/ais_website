@@ -27,7 +27,7 @@
 }
 
 .pageTitle {
-  font-family: var(--serif);
+  font-family: var(--sans);
   font-size: clamp(2.2rem, 4vw, 2.9rem);
   font-weight: 500;
   letter-spacing: -0.015em;
@@ -65,7 +65,7 @@
 }
 
 .fellowshipName {
-  font-family: var(--serif);
+  font-family: var(--sans);
   font-size: 1.45rem;
   font-weight: 600;
   letter-spacing: -0.01em;

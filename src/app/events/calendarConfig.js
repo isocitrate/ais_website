@@ -12,3 +12,7 @@ export const GOOGLE_ADD_URL =
 export const EMBED_URL = `https://calendar.google.com/calendar/embed?src=${encodeURIComponent(
   CALENDAR_ID
 )}&ctz=${encodeURIComponent(CALENDAR_TIME_ZONE)}&mode=MONTH&showTitle=0&showPrint=0&showCalendars=0`;
+
+export const ICAL_URL = `https://calendar.google.com/calendar/ical/${encodeURIComponent(
+  CALENDAR_ID
+)}/public/basic.ics`;

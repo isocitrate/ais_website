@@ -120,6 +120,26 @@
   margin: 0;
 }
 
+.footerLockupLight,
+.footerLockupDark {
+  display: block;
+  width: 188px;
+  height: auto;
+  object-fit: contain;
+}
+
+.footerLockupDark {
+  display: none;
+}
+
+:global(:root[data-theme="dark"]) .footerLockupLight {
+  display: none;
+}
+
+:global(:root[data-theme="dark"]) .footerLockupDark {
+  display: block;
+}
+
 @media (max-width: 640px) {
   .main {
     flex-direction: column;

@@ -4,7 +4,7 @@
 }
 
 .aboutContainer {
-  max-width: 800px;
+  max-width: 860px;
   margin: 0 auto;
   padding: 3.5rem var(--page-pad) 2rem;
 }
@@ -27,7 +27,7 @@
 }
 
 .pageTitle {
-  font-family: var(--serif);
+  font-family: var(--sans);
   font-size: clamp(2.2rem, 4vw, 2.9rem);
   font-weight: 500;
   letter-spacing: -0.015em;
@@ -40,7 +40,7 @@
 }
 
 .sectionTitle {
-  font-family: var(--serif);
+  font-family: var(--sans);
   font-size: 1.55rem;
   font-weight: 600;
   letter-spacing: -0.01em;

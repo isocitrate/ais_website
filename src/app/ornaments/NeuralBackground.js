@@ -2,7 +2,7 @@
 import { useEffect, useRef } from "react";
 import styles from "./NeuralBackground.module.css";
 
-export default function NeuralBackground() {
+export default function NeuralBackground({ transparent = false, clearWidth = 860 }) {
   const canvasRef = useRef(null);
 
   useEffect(() => {
@@ -18,7 +18,6 @@ export default function NeuralBackground() {
     let pulses = [];
     let raf = 0;
     let last = 0;
-    let ambientTimer = 0;
     let resizeTimer = 0;
 
     const mouse = { x: 0, y: 0, sx: 0, sy: 0, active: false, strength: 0 };
@@ -38,7 +37,7 @@ export default function NeuralBackground() {
       const maroon = styles.getPropertyValue("--maroon-rgb").trim() || (dark ? "208,106,99" : "139,23,36");
       return {
         background: dark ? "#171412" : "#fbfaf8",
-        idle: ink.split(",").map(Number),
+        idle: dark ? [174, 168, 160] : [155, 151, 145],
         active: maroon.split(",").map(Number),
         grid: dark ? "#211d19" : "#f2f0ec",
       };
@@ -58,9 +57,9 @@ export default function NeuralBackground() {
       nodes = [];
       edges = [];
       pulses = [];
-      const layerCount = Math.max(3, Math.round(width / 210) + 1);
+      const layerCount = Math.max(4, Math.round(width / 150) + 1);
       const gapX = width / (layerCount - 1);
-      const base = Math.max(2, Math.round(height / 150));
+      const base = Math.max(6, Math.round(height / 82));
       const layers = [];
 
       for (let layerIndex = 0; layerIndex < layerCount; layerIndex++) {
@@ -94,7 +93,7 @@ export default function NeuralBackground() {
           const nearest = layers[layerIndex + 1]
             .slice()
             .sort((a, b) => Math.abs(a.by - node.by) - Math.abs(b.by - node.by));
-          const connectionCount = Math.min(nearest.length, 2 + (Math.random() < 0.3 ? 1 : 0));
+          const connectionCount = Math.min(nearest.length, 3 + (Math.random() < 0.35 ? 1 : 0));
           for (let i = 0; i < connectionCount; i++) {
             const edge = { a: node, b: nearest[i], w: 0.75 + Math.random() * 0.25, act: 0 };
             node.out.push(edge);
@@ -119,8 +118,13 @@ export default function NeuralBackground() {
 
     function draw() {
       ctx.globalCompositeOperation = "source-over";
-      ctx.fillStyle = palette.background;
-      ctx.fillRect(0, 0, width, height);
+
+      if (!transparent) {
+        ctx.fillStyle = palette.background;
+        ctx.fillRect(0, 0, width, height);
+      } else {
+        ctx.clearRect(0, 0, width, height);
+      }
 
       ctx.strokeStyle = palette.grid;
       ctx.lineWidth = 1;
@@ -139,7 +143,7 @@ export default function NeuralBackground() {
       ctx.beginPath();
       const litEdges = [];
       for (const edge of edges) {
-        const activation = Math.max(edge.act, (edge.a.prox + edge.b.prox) * 0.5);
+        const activation = transparent ? 0 : Math.max(edge.act, (edge.a.prox + edge.b.prox) * 0.5);
         if (activation < 0.02) {
           ctx.moveTo(edge.a.x, edge.a.y);
           ctx.lineTo(edge.b.x, edge.b.y);
@@ -147,7 +151,7 @@ export default function NeuralBackground() {
           litEdges.push(edge, activation);
         }
       }
-      ctx.strokeStyle = rgba(palette.idle, 0.22);
+      ctx.strokeStyle = rgba(palette.idle, 0.28);
       ctx.stroke();
 
       for (let i = 0; i < litEdges.length; i += 2) {
@@ -185,8 +189,8 @@ export default function NeuralBackground() {
       }
 
       for (const node of nodes) {
-        const activation = Math.min(1, node.act);
-        ctx.fillStyle = rgba(mix(palette.idle, palette.active, activation), 0.85 + 0.15 * activation);
+        const activation = transparent ? 0 : Math.min(1, node.act);
+        ctx.fillStyle = rgba(palette.idle, 0.85);
         ctx.beginPath();
         ctx.arc(node.x, node.y, 1.6 + 1.6 * activation, 0, Math.PI * 2);
         ctx.fill();
@@ -218,19 +222,7 @@ export default function NeuralBackground() {
         node.y = node.by + driftY + dy * proximity * 0.18;
         node.act = Math.max(node.act * Math.exp(-dt / 450), proximity);
         node.cool -= dt;
-        if (!reducedMotion && node.cool <= 0 && node.out.length && node.act > 0.55) fire(node, node.act);
-      }
-
-      if (!reducedMotion && nodes.length) {
-        ambientTimer -= dt;
-        if (ambientTimer <= 0) {
-          ambientTimer = 1400 * (0.5 + Math.random());
-          const node = nodes[Math.floor(Math.random() * nodes.length)];
-          if (node.out.length) {
-            node.act = Math.max(node.act, 0.8);
-            fire(node, 0.85);
-          }
-        }
+        if (!transparent && !reducedMotion && node.cool <= 0 && node.out.length && node.act > 0.55) fire(node, node.act);
       }
 
       for (let i = pulses.length - 1; i >= 0; i--) {
@@ -251,25 +243,18 @@ export default function NeuralBackground() {
 
     function onMove(event) {
       const rect = canvas.getBoundingClientRect();
-      mouse.x = event.clientX - rect.left;
-      mouse.y = event.clientY - rect.top;
-      if (!mouse.active && mouse.strength < 0.05) {
-        mouse.sx = mouse.x;
-        mouse.sy = mouse.y;
-      }
-      mouse.active = true;
-    }
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+      const inside = x >= 0 && y >= 0 && x <= rect.width && y <= rect.height;
 
-    function onDown(event) {
-      onMove(event);
-      if (reducedMotion) return;
-      for (const node of nodes) {
-        const dx = node.bx - mouse.x;
-        const dy = node.by - mouse.y;
-        if (dx * dx + dy * dy < 170 * 170 && node.out.length) {
-          node.act = 1;
-          fire(node, 1);
-        }
+      mouse.active = inside;
+      if (!inside) return;
+
+      mouse.x = x;
+      mouse.y = y;
+      if (mouse.strength < 0.05) {
+        mouse.sx = x;
+        mouse.sy = y;
       }
     }
 
@@ -290,7 +275,6 @@ export default function NeuralBackground() {
     }
 
     window.addEventListener("pointermove", onMove, { passive: true });
-    window.addEventListener("pointerdown", onDown, { passive: true });
     document.documentElement.addEventListener("pointerleave", onLeave);
     const resizeObserver = new ResizeObserver(onResize);
     resizeObserver.observe(canvas.parentElement);
@@ -305,12 +289,18 @@ export default function NeuralBackground() {
       window.cancelAnimationFrame(raf);
       clearTimeout(resizeTimer);
       window.removeEventListener("pointermove", onMove);
-      window.removeEventListener("pointerdown", onDown);
       document.documentElement.removeEventListener("pointerleave", onLeave);
       resizeObserver.disconnect();
       themeObserver.disconnect();
     };
-  }, []);
+  }, [transparent]);
 
-  return <canvas ref={canvasRef} className={styles.canvas} aria-hidden="true" />;
+  return (
+    <canvas
+      ref={canvasRef}
+      className={`${styles.canvas} ${transparent ? styles.side : ""}`}
+      style={{ "--page-clear": `${clearWidth}px` }}
+      aria-hidden="true"
+    />
+  );
 }

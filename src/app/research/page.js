@@ -1,8 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import styles from "./page.module.css";
-import NodeField from "@/app/ornaments/NodeField";
-import GridFade from "@/app/ornaments/GridFade";
+import NeuralBackground from "@/app/ornaments/NeuralBackground";
 
 export const metadata = {
   title: "Research - AI Safety Group @ UChicago XLab",
@@ -48,11 +47,6 @@ const papers = [
     image: "/position-why.png",
   },
   {
-    title: "Open-source Language Models: Identifying Contributing Factors and Future Trends",
-    href: "https://bpb-us-w2.wpmucdn.com/voices.uchicago.edu/dist/9/3887/files/2024/02/FINALHuangXLabSRF23-OpenSourceLLMsTrends-e3518fe16ccd86b8.pdf",
-    image: "/open-source.png",
-  },
-  {
     title: "Forbidden Facts: An Investigation of Competing Objectives in Llama-2",
     href: "https://arxiv.org/abs/2312.08793",
     image: "/forbidden-facts.png",
@@ -78,35 +72,31 @@ const otherAreas = [
 export default function Research() {
   return (
     <div className={styles.pageWrap}>
-      <GridFade />
-      <NodeField />
+      <NeuralBackground transparent clearWidth={860} />
       <div className={styles.researchContainer}>
       <header className={styles.pageHeader}>
-        <p className={styles.eyebrow}>What We Study</p>
         <h1 className={styles.pageTitle}>Research</h1>
         <p className={styles.pageLede}>
-          Applications for research working groups are currently closed. Please look out for future
-          opportunities through our{" "}
+          Applications for research working groups are currently closed and expected to open in early January for Winter 2027. Join our 
+          {" "}
           <a
             href="https://lists.uchicago.edu/web/info/aisafety"
             target="_blank"
             rel="noopener noreferrer"
             className={styles.inlineLink}>
             mailing list
-          </a>
-          !
+          </a> to be notified when applications open. 
         </p>
       </header>
 
       <p className={styles.intro}>
-        Our work spans the technical, strategic, and governance dimensions of AI safety. Active
-        research concentrates in four areas:
+        Our work spans the technical, strategic, and governal dimensions of AI safety. 
       </p>
 
       <div className={styles.areaCard}>
         <h2 className={styles.areaTitle}>Technical AI Safety</h2>
         <p className={styles.areaDescription}>
-          Understanding the empirical properties of current frontier AI systems (namely, LLMs) and
+          Understanding the empirical properties of existing frontier AI systems and
           developing theory about the properties we can expect from future systems — how they are
           shaped by different forms of training, the mechanisms behind their behavior, and how human
           oversight can scale to increasingly advanced AI.
@@ -133,7 +123,7 @@ export default function Research() {
       <div className={styles.areaCard}>
         <h2 className={styles.areaTitle}>Strategy &amp; Forecasting</h2>
         <p className={styles.areaDescription}>
-          Mapping AI development trajectories, identifying high-leverage interventions, and
+          Mapping AI development trajectories, identifying the highest-leverage interventions, and
           analyzing how transformative AI will reshape institutions, economies, and global risk.
         </p>
       </div>
@@ -173,7 +163,7 @@ export default function Research() {
         </div>
       </section>
 
-      <section className={styles.otherSection}>
+      <section className={styles.otherSection} hidden>
         <h2 className={styles.otherTitle}>Other areas we actively engage with include:</h2>
         <ul className={styles.otherList}>
           {otherAreas.map((area) => (

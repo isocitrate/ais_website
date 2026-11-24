@@ -1,7 +1,6 @@
 import React from "react";
 import styles from "./page.module.css";
-import NodeField from "@/app/ornaments/NodeField";
-import GridFade from "@/app/ornaments/GridFade";
+import NeuralBackground from "@/app/ornaments/NeuralBackground";
 
 export const metadata = {
   title: "Policy and Governance - AI Safety Group @ UChicago XLab",
@@ -658,11 +657,10 @@ const sessions = [
 export default function PolicyGovernance() {
   return (
     <div className={styles.pageWrap}>
-      <GridFade />
-      <NodeField />
+      <NeuralBackground transparent clearWidth={860} />
       <div className={styles.fellowshipContainer}>
         <header className={styles.pageHeader}>
-          <p className={styles.eyebrow}>Fellowship Syllabus</p>
+          
           <h1 className={styles.pageTitle}>Policy and Governance</h1>
           <p className={styles.pageLede}>
             This track builds a working map of AI policy: the key players and institutions, the

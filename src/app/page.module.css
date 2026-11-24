@@ -3,10 +3,13 @@
 .hero {
   position: relative;
   overflow: hidden;
+  display: flex;
+  align-items: center;
   /* How far the affiliation rule sits above its natural spot. Scales with screen
      height; the same amount is added below so the sections after don't move. */
   --affiliation-lift: clamp(1rem, 3vh, 2rem);
-  padding: clamp(2.75rem, calc(11vh - 0.75rem), 6.75rem) 0 calc(3.5rem + var(--affiliation-lift));
+  min-height: calc(100svh - var(--nav-height));
+  padding: clamp(3rem, 7vh, 5.5rem) 0 calc(5rem + var(--affiliation-lift));
 }
 
 .hero::before {
@@ -24,99 +27,40 @@
   max-width: 1280px;
   margin: 0 auto;
   padding: 0 var(--page-pad);
+  width: 100%;
+  transform: translateY(-2.5vh);
 }
 
-.heroTitle {
-  font-family: var(--serif);
-  font-weight: 500;
-  font-size: clamp(2.6rem, 6vw, 5rem);
-  line-height: 1.04;
-  letter-spacing: -0.022em;
-  color: var(--ink);
-  max-width: 19ch;
-  margin: 0;
-}
-
-.heroAccent {
+.heroBrand {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: fit-content;
   color: var(--maroon);
+  font-family: var(--serif);
+  line-height: 0.9;
+}
+
+.heroBrandName {
+  font-size: clamp(4rem, 7.5vw, 7.25rem);
   font-weight: 500;
+  letter-spacing: -0.045em;
+  white-space: nowrap;
+}
+
+.heroBrandAffiliation {
+  margin-top: 0.42em;
+  padding-left: 0.08em;
+  font-size: clamp(1.65rem, 3.1vw, 3rem);
+  font-weight: 500;
+  letter-spacing: -0.025em;
+  line-height: 1;
 }
 
 .heroLede {
-  font-family: var(--sans);
-  font-size: clamp(1.05rem, 1.3vw, 1.2rem);
-  font-weight: var(--text-weight);
-  line-height: 1.65;
-  color: var(--muted);
-  max-width: 36rem;
-  margin: calc(clamp(4.5rem, 11vh, 6.5rem) + 1.5 * 1.65em + 0.75rem) 0 0;
-  /* Even line lengths instead of a ragged short middle line. */
-  text-wrap: balance;
-}
-
-.heroCtas {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 2rem;
-  margin-top: 1.25rem;
-  font-family: var(--sans);
-  /* Same size and line height as the lede above. */
-  font-size: clamp(1.05rem, 1.3vw, 1.2rem);
-  line-height: 1.65;
-}
-
-.ctaPrimary {
-  color: var(--maroon);
-  font-weight: 500;
-  text-decoration: none;
-  white-space: nowrap;
-  padding-bottom: 0.25rem;
-  border-bottom: 1px solid currentColor;
-  transition: opacity 0.2s ease;
-}
-
-.ctaPrimary span {
-  display: inline-block;
-  transition: transform 0.2s ease;
-}
-
-.ctaPrimary:hover {
-  opacity: 0.8;
-}
-
-.ctaPrimary:hover span {
-  transform: translateX(3px);
-}
-
-.heroAffiliation {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 1rem;
-  margin-top: calc(clamp(3.5rem, 9vh, 6rem) - var(--affiliation-lift));
-  padding-top: 1.6rem;
-  border-top: 1px solid var(--hairline);
-  font-family: var(--sans);
-  font-size: clamp(1.05rem, 1.3vw, 1.2rem);
-  font-weight: var(--text-weight);
-  color: var(--muted);
-}
-
-.xlabLink {
-  display: inline-block;
-  line-height: 0;
-  opacity: 0.9;
-  transition: opacity 0.2s ease;
-}
-
-.xlabLink:hover {
-  opacity: 1;
-}
-
-.xlabLogo {
-  height: auto;
-  max-width: 100%;
+  margin: 2.75rem 0 0;
+  font-size: clamp(1.15rem, 1.5vw, 1.35rem);
+  max-width: 42rem;
 }
 
 /* --- Pillars --- */
@@ -208,4 +152,74 @@
   .heroAffiliation {
     margin-top: calc(3rem - var(--affiliation-lift));
   }
+}
+
+@media screen and (max-width: 700px) {
+  .heroBrandName {
+    font-size: clamp(2.75rem, 13vw, 4rem);
+    white-space: normal;
+  }
+
+  .heroBrandAffiliation {
+    font-size: clamp(1.35rem, 6vw, 1.75rem);
+  }
+
+  .heroLockupLight,
+  .heroLockupDark {
+    width: min(100%, 520px);
+  }
+}
+
+.heroLockupLight,
+.heroLockupDark {
+  width: clamp(520px, 55vw, 820px);
+  height: auto;
+  object-fit: contain;
+}
+
+.heroLockupDark {
+  display: none;
+}
+
+:global(:root[data-theme="dark"]) .heroLockupLight {
+  display: none;
+}
+
+:global(:root[data-theme="dark"]) .heroLockupDark {
+  display: block;
+}
+
+.heroCtas {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.75rem;
+  margin-top: 1.75rem;
+  font-family: var(--sans);
+}
+
+.ctaPrimary {
+  color: var(--maroon);
+  font-family: var(--sans);
+  font-size: clamp(1.15rem, 1.5vw, 1.35rem);
+  font-weight: 500;
+  line-height: 1.65;
+  text-decoration: none;
+  white-space: nowrap;
+  padding-bottom: 0;
+  border-bottom: 0;
+  transition: opacity 0.2s ease;
+}
+
+.ctaPrimary span {
+  display: inline-block;
+  transition: transform 0.2s ease;
+}
+
+.ctaPrimary:hover {
+  opacity: 0.8;
+}
+
+.ctaPrimary:hover span {
+  transform: translateX(3px);
 }

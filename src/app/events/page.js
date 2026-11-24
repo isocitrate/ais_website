@@ -1,73 +1,15 @@
 import React from "react";
 import Image from "next/image";
 import styles from "./page.module.css";
-import NodeField from "@/app/ornaments/NodeField";
-import GridFade from "@/app/ornaments/GridFade";
+import NeuralBackground from "@/app/ornaments/NeuralBackground";
 import EventsCalendar from "./EventsCalendar";
-import { GOOGLE_ADD_URL } from "./calendarConfig";
+import { GOOGLE_ADD_URL, ICAL_URL } from "./calendarConfig";
 
 export const metadata = {
   title: "Events - AI Safety Group @ UChicago XLab",
   description: "Upcoming and past events from the AI Safety Group @ UChicago XLab.",
   keywords: "AI safety, events, University of Chicago, symposium",
 };
-
-const upcomingEvents = [
-  {
-    name: "Midwest AIS Retreat",
-    date: "November 6-8, 2026",
-    location: "Racine, Wisconsin",
-    description:
-      "The first ever Midwest AI Safety Retreat will bring together more than 40 students from university AI Safety groups across the Midwest, along with professionals working in AI Safety. The retreat will allow students to meet others with similar interests, develop personal plans, have high-quality discussion, and learn from professionals.",
-  },
-];
-
-const pastEvents = [
-  {
-    name: "What is Going On in AI?",
-    date: "October 15, 2026 · 5–7pm",
-    location: "Rubenstein Forum, Friedman Hall Auditorium",
-    href: "https://luma.com/vqxdyli7",
-    description:
-      "A discussion with Stephen Casper, computer scientist and assistant professor at the Harvard Kennedy School of Government, and Daniel Holz, physicist at the University of Chicago and director of the Existential Risk Laboratory, to make sense of recent events in AI. What happened in the HuggingFace/OpenAI attack and the other rogue agent breakouts? Why are people calling for a slowdown?",
-    image: {
-      src: "/whatsgoingoninAIposter.jpg",
-      alt: "Poster for What is Going On in AI? with Stephen Casper and Daniel Holz",
-      width: 1529,
-      height: 2299,
-    },
-  },
-  {
-    name: "Autumn Quarter Info Session",
-    date: "October 5, 2026 · 6–7pm",
-    description: "Come learn about our programs for the Autumn quarter!",
-  },
-  {
-    name: "Lightning Talks — Spring Quarter '26",
-    date: "May 22, 2026",
-    description: "Hear quick talks on AI Safety from members of our community.",
-  },
-  {
-    name: "Uncommon Hacks AI Safety Track",
-    date: "May 16–17, 2026",
-    description:
-      "XLab is proud to sponsor the AI Safety Track of Uncommon Hacks 2026. We hope this will provide an opportunity for people to learn about AI Safety and get hands-on experience building a project that contributes to the field. Because of the relative novelty of the field, every individual contributor, even those who are less experienced, can have an outsized impact on the trajectory of AI development.",
-    href: "https://docs.google.com/document/d/10v01apW04bVNBBWYw37yvalaSIaLOR26su-SVHcsI0Q/edit?tab=t.x4mzga1jdrrb",
-  },
-  {
-    name: "Speaker Event with Aryan Bhatt",
-    date: "May 14, 2026 · 7–8pm",
-    description:
-      "XLab is thrilled to welcome Aryan Bhatt, Member of the Technical Staff at Redwood Research, for a virtual panel. We also hosted an in-person gathering on UChicago's campus with dinner provided.",
-    href: "https://luma.com/8bybv38w",
-  },
-  {
-    name: "Chicago Symposium on Transformative AI",
-    description:
-      "An intensive two-day symposium bringing together undergraduates to think rigorously about the future of AI and its implications. The symposium featured talks from speakers in technical AI alignment and AI governance, and peer collaboration to challenge assumptions and develop new ideas.",
-    href: "https://chicagoalignment.com/",
-  },
-];
 
 function EventRow({ event }) {
   return (
@@ -76,7 +18,14 @@ function EventRow({ event }) {
       <div className={styles.eventBody}>
         <h3 className={styles.eventName}>{event.name}</h3>
         {event.location && <p className={styles.eventLocation}>{event.location}</p>}
-        <p className={styles.eventDescription}>{event.description}</p>
+        {event.descriptionHtml ? (
+          <div
+            className={styles.eventDescription}
+            dangerouslySetInnerHTML={{ __html: event.descriptionHtml }}
+          />
+        ) : (
+          <p className={styles.eventDescription}>{event.description}</p>
+        )}
         {event.image && (
           <a
             href={event.image.src}
@@ -115,14 +64,14 @@ function EventRow({ event }) {
   );
 }
 
-export default function Events() {
+export default async function Events() {
+  const nearestUpcomingEvent = await getNearestUpcomingEvent();
+
   return (
     <div className={styles.pageWrap}>
-      <GridFade />
-      <NodeField />
+      <NeuralBackground transparent clearWidth={860} />
       <div className={styles.eventsContainer}>
         <header className={styles.pageHeader}>
-          <p className={styles.eyebrow}>What&apos;s Happening</p>
           <h1 className={styles.pageTitle}>Events</h1>
           <p className={styles.pageLede}>
             Check up-to-date events on our{" "}
@@ -144,18 +93,130 @@ export default function Events() {
 
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>Upcoming</h2>
-          {upcomingEvents.map((event) => (
-            <EventRow key={event.name} event={event} />
-          ))}
-        </section>
-
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>Past</h2>
-          {pastEvents.map((event) => (
-            <EventRow key={event.name} event={event} />
-          ))}
+          {nearestUpcomingEvent ? (
+            <EventRow key={nearestUpcomingEvent.name} event={nearestUpcomingEvent} />
+          ) : (
+            <p className={styles.eventDescription}>No upcoming special event is currently scheduled.</p>
+          )}
         </section>
       </div>
     </div>
   );
+}
+
+export const revalidate = 300;
+
+function unfoldIcs(value) {
+  return value.replace(/\r\n[ \t]/g, "");
+}
+
+function decodeIcsText(value = "") {
+  return value
+    .replace(/\\n/gi, "\n")
+    .replace(/\\,/g, ",")
+    .replace(/\\;/g, ";")
+    .replace(/\\\\/g, "\\")
+    .trim();
+}
+
+function parseIcsDate(value) {
+  if (!value) return null;
+  const cleaned = value.replace(/^;[^:]*:/, "").replace(/^.*:/, "");
+  if (/^\d{8}T/.test(cleaned)) {
+    const match = cleaned.match(/^([0-9]{4})([0-9]{2})([0-9]{2})T([0-9]{2})([0-9]{2})([0-9]{2})?Z?$/);
+    if (!match) return null;
+    const [, year, month, day, hour, minute, second = "0"] = match;
+    const utc = cleaned.endsWith("Z");
+    return utc
+      ? new Date(Date.UTC(+year, +month - 1, +day, +hour, +minute, +second))
+      : new Date(+year, +month - 1, +day, +hour, +minute, +second);
+  }
+  const match = cleaned.match(/^([0-9]{4})([0-9]{2})([0-9]{2})$/);
+  return match ? new Date(+match[1], +match[2] - 1, +match[3]) : null;
+}
+
+function formatEventDate(start, end) {
+  if (!start) return "Date to be announced";
+  const startDate = new Intl.DateTimeFormat("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  }).format(start);
+  const allDay = start.getHours() === 0 && start.getMinutes() === 0;
+  if (allDay) {
+    if (end && end.getTime() > start.getTime()) {
+      const endDate = new Date(end.getTime() - 86400000);
+      if (endDate.toDateString() !== start.toDateString()) {
+        return `${startDate} – ${new Intl.DateTimeFormat("en-US", { month: "long", day: "numeric", year: "numeric" }).format(endDate)}`;
+      }
+    }
+    return startDate;
+  }
+  const time = new Intl.DateTimeFormat("en-US", {
+    weekday: "short",
+    month: "long",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  }).format(start);
+  return time;
+}
+
+async function getNearestUpcomingEvent() {
+  try {
+    const response = await fetch(ICAL_URL, {
+      next: { revalidate: 300 },
+    });
+    if (!response.ok) return null;
+
+    const ics = unfoldIcs(await response.text());
+    const now = Date.now();
+    const events = [];
+
+    for (const block of ics.split("BEGIN:VEVENT").slice(1)) {
+      const lines = block.split(/\r?\n/);
+      const fields = {};
+      for (const line of lines) {
+        const separator = line.indexOf(":");
+        if (separator < 0) continue;
+        const key = line.slice(0, separator).split(";")[0];
+        fields[key] = line.slice(separator + 1);
+      }
+
+      const title = decodeIcsText(fields.SUMMARY);
+      const description = decodeIcsText(fields.DESCRIPTION);
+      const location = decodeIcsText(fields.LOCATION);
+      const start = parseIcsDate(fields.DTSTART);
+      const end = parseIcsDate(fields.DTEND);
+      if (!title || !start || start.getTime() < now) continue;
+
+      const excludedText = `${title} ${description}`.toLowerCase();
+      if (
+        fields.RRULE ||
+        /\b(office hours?|coworking|co-working|weekly|recurring)\b/i.test(excludedText)
+      ) continue;
+
+      const calendarLinks = [...description.matchAll(/https?:\/\/[^\"'<>\s]+/g)]
+        .map((match) => match[0].replace(/[)>.,]+$/, ""));
+      const href = calendarLinks.find((link) => link.includes("luma.com")) || calendarLinks[0];
+      const descriptionHtml = description
+        .replace(/<a\b([^>]*)>/gi, '<a$1 target="_blank" rel="noopener noreferrer">');
+      events.push({
+        name: title,
+        date: formatEventDate(start, end),
+        location,
+        description: description.replace(/<[^>]*>/g, " ").replace(/&nbsp;/g, " ").replace(/&amp;/g, "&").replace(/\s+/g, " ").trim()
+          || "Details for this event are available in the shared calendar.",
+        descriptionHtml,
+        href,
+        startMs: start.getTime(),
+      });
+    }
+
+    events.sort((a, b) => a.startMs - b.startMs);
+    return events[0] || null;
+  } catch (error) {
+    console.error("Unable to load upcoming event:", error);
+    return null;
+  }
 }
