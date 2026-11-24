@@ -90,7 +90,7 @@ export default function Research() {
       </header>
 
       <p className={styles.intro}>
-        Our work spans the technical, strategic, and governal dimensions of AI safety. 
+        Our work spans the technical, strategic, and governance aspects of AI safety. 
       </p>
 
       <div className={styles.areaCard}>
