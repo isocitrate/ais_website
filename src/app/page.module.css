@@ -2,7 +2,7 @@
   Homepage, built from the Figma "ais_homepage" frame (designed at 1512px wide).
   Type sizes are clamp()s whose max is the design size at 1512px; spacing
   follows the design's vertical rhythm. Colours use the site's theme tokens so
-  dark mode keeps working; the maroon block uses the design's #900000.
+  dark mode keeps working; the maroon block uses the design's var(--accent).
 */
 
 .container {
@@ -227,7 +227,7 @@
 }
 
 .heroButtonPrimary {
-  background: #900000;
+  background: var(--accent);
   color: #fff;
 }
 
@@ -535,7 +535,7 @@
   /* Sits flush on the footer (cancels the footer's 5rem top margin). */
   margin-bottom: -5rem;
   padding: clamp(3rem, 5vw, 75px) 0 clamp(3rem, 4.5vw, 68px);
-  background: #900000;
+  background: var(--accent);
   color: #fff;
 }
 

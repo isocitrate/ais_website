@@ -38,7 +38,8 @@ export default function NeuralBackground({ transparent = false, clearWidth = 860
       const ink = styles.getPropertyValue("--ink-rgb").trim() || (dark ? "236,231,223" : "26,24,21");
       const maroon = styles.getPropertyValue("--maroon-rgb").trim() || (dark ? "208,106,99" : "139,23,36");
       return {
-        background: dark ? "#171412" : "#fbfaf8",
+        // Page colour from the theme (--paper), so the canvas always matches the page.
+        background: getComputedStyle(document.documentElement).getPropertyValue("--paper").trim() || (dark ? "#171412" : "#fbfaf8"),
         idle: dark ? [174, 168, 160] : [155, 151, 145],
         active: maroon.split(",").map(Number),
         grid: dark ? "#211d19" : "#f2f0ec",

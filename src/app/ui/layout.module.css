@@ -240,7 +240,7 @@
 
 .buttonPrimary {
   composes: button;
-  background: #900000;
+  background: var(--accent);
   color: #fff;
 }
 

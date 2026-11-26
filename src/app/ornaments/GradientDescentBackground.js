@@ -156,7 +156,8 @@ export default function GradientDescentBackground({ interactive = true, outcome 
       const maroon = getComputedStyle(document.documentElement).getPropertyValue("--maroon-rgb").trim() || "139,23,36";
       if (tone === "maroon") return { background: null, line: [255, 255, 255], alpha: 0.13, tint: 0, maroon };
       return {
-        background: dark ? "#171412" : "#fbfaf8",
+        // Page colour from the theme (--paper), so the canvas always matches the page.
+        background: getComputedStyle(document.documentElement).getPropertyValue("--paper").trim() || (dark ? "#171412" : "#fbfaf8"),
         line: dark ? [174, 168, 160] : [120, 114, 106],
         alpha: dark ? 0.32 : 0.3,
         tint: 1, // lines take on the maroon near the minimum (depth shading)

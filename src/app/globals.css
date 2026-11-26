@@ -12,6 +12,9 @@
   --hairline-dark: #ddd8cf;
   --maroon: #8b1724;
   --maroon-rgb: 139, 23, 36;
+  /* The design's deep maroon for solid fills (buttons, the "Get involved" block,
+     chart). Same in light and dark mode: white text always sits on it. */
+  --accent: #900000;
 
   /* Layout */
   /* Figma header: 78px mark with ~52px above and below at 1512px wide. */

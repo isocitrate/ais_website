@@ -1,8 +1,8 @@
-/* Task-length chart. One accent colour (the design's #900000, lighter maroon in
+/* Task-length chart. One accent colour (the design's var(--accent), lighter maroon in
    dark mode); everything else is ink/grey so the trend is what you see first. */
 
 .figure {
-  --chart: #900000;
+  --chart: var(--accent);
   margin: clamp(1.75rem, 3vw, 2.75rem) 0 0;
 }
 
