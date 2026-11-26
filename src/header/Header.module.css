@@ -101,7 +101,7 @@
   font-weight: 900;
 }
 
-/* --- Dropdown (Figma: grey panel, underlined 24px links) --- */
+/* --- Dropdown (underlined links on a paper panel) --- */
 
 .dropdown {
   position: absolute;
@@ -109,9 +109,12 @@
   left: 0.69em;
   min-width: 10.9em;
   margin: 0;
-  padding: 0.25em 0.44em 0.6em;
+  padding: 0.45em 0.7em 0.6em;
   list-style: none;
-  background: var(--hairline-dark);
+  /* Paper with a hairline border, like the compact bar: part of the menu, not a
+     content box (the grey/beige box is reserved for actionable cards). */
+  background: var(--paper);
+  border: 1px solid var(--hairline-dark);
   font-size: 0.75em;
   opacity: 0;
   visibility: hidden;
