@@ -274,7 +274,17 @@ a.mobileNavLink:hover {
 .headerHomeMark img {
   width: clamp(40px, 5.16vw, 78px);
   height: auto;
-  transition: width 0.3s ease;
+  transition: width 0.3s ease, transform 0.25s ease;
+}
+
+/* The logo links home: a subtle zoom on hover/focus, a slight press on click. */
+.headerHomeMark:hover img,
+.headerHomeMark:focus-visible img {
+  transform: scale(1.08);
+}
+
+.headerHomeMark:active img {
+  transform: scale(0.96);
 }
 
 .scrolled .headerHomeMark img {
