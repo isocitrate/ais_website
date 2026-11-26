@@ -19,7 +19,9 @@ import styles from "./NeuralBackground.module.css";
 const OPEN_AREA = { x0: 0.5, x1: 0.98, y0: 0.2, y1: 0.5 }; // where the ball may roll
 function randomLandscape() {
   const rnd = (a, b) => a + Math.random() * (b - a);
-  const goal = { fx: rnd(0.82, 0.9), y: rnd(0.33, 0.4), depth: 1, size: 0.05 };
+  const angle = () => rnd(0, Math.PI);
+  // Main minimum: an oval valley with a random stretch and direction (not a round hole).
+  const goal = { fx: rnd(0.82, 0.9), y: rnd(0.33, 0.4), depth: rnd(0.9, 1.15), size: rnd(0.04, 0.06), stretch: rnd(1.2, 2.2), angle: angle() };
   const start = { fx: rnd(0.6, 0.7), fy: rnd(0.27, 0.35) };
   const traps = [];
   for (let k = 0, n = Math.random() < 0.5 ? 1 : 2; k < n; k++) {
@@ -30,26 +32,53 @@ function randomLandscape() {
       y: start.fy + (goal.y - start.fy) * t + rnd(-0.03, 0.03),
       depth: rnd(0.18, 0.32),
       size: 0.01,
+      stretch: rnd(1, 1.6),
+      angle: angle(),
     });
   }
   const bumps = [];
   for (let k = 0, n = Math.random() < 0.5 ? 1 : 2; k < n; k++) {
-    const b = { fx: rnd(0.55, 0.95), y: rnd(0.1, 0.5), height: rnd(0.15, 0.27), size: rnd(0.012, 0.024) };
+    const b = { fx: rnd(0.55, 0.95), y: rnd(0.1, 0.5), height: rnd(0.15, 0.27), size: rnd(0.012, 0.024), stretch: rnd(1, 2), angle: angle() };
     if (Math.abs(b.fx - goal.fx) > 0.06 || Math.abs(b.y - goal.y) > 0.12) bumps.push(b); // not on the goal
+  }
+  // Terrain: a few broad, shallow hills and dips anywhere (incl. the left), so the
+  // contours ripple across the page. Shallow enough that the goal stays lowest,
+  // and kept off the goal itself.
+  for (let k = 0, n = 3 + Math.floor(Math.random() * 3); k < n; k++) {
+    const b = {
+      fx: rnd(0, 1),
+      y: rnd(-0.05, 1),
+      height: rnd(0.06, 0.18) * (Math.random() < 0.5 ? -1 : 1),
+      size: rnd(0.04, 0.14),
+      stretch: rnd(1, 2.5),
+      angle: angle(),
+    };
+    if (Math.abs(b.fx - goal.fx) > 0.12 || Math.abs(b.y - goal.y) > 0.2) bumps.push(b);
   }
   return { goal, traps, bumps, start };
 }
 
+// Gaussian with an elliptical footprint: `stretch` lengthens it along `angle`.
+function blob(X, Y, cx, cy, size, stretch = 1, angle = 0) {
+  const dx = X - cx;
+  const dy = Y - cy;
+  const c = Math.cos(angle);
+  const sn = Math.sin(angle);
+  const u = (dx * c + dy * sn) / stretch;
+  const v = (-dx * sn + dy * c) * Math.sqrt(stretch);
+  return Math.exp(-(u * u + v * v) / size);
+}
+
 // Loss surface over (X, Y) in height units; `r` = width / height.
 function makeLoss(r, land) {
-  const wells = [land.goal, ...land.traps].map((w) => ({ x: w.fx * r, y: w.y, depth: w.depth, size: w.size }));
-  const bumps = land.bumps.map((b) => ({ x: b.fx * r, y: b.y, height: b.height, size: b.size }));
+  const wells = [land.goal, ...land.traps].map((w) => ({ ...w, x: w.fx * r }));
+  const bumps = land.bumps.map((b) => ({ ...b, x: b.fx * r }));
   const g = wells[0];
   return (X, Y) => {
     // Gentle bowl toward the global minimum so every path eventually gets there.
-    let v = 0.35 * (((X - g.x) / r) ** 2 + (Y - g.y) ** 2);
-    for (const w of wells) v -= w.depth * Math.exp(-((X - w.x) ** 2 + (Y - w.y) ** 2) / w.size);
-    for (const b of bumps) v += b.height * Math.exp(-((X - b.x) ** 2 + (Y - b.y) ** 2) / b.size);
+    let v = 0.3 * (((X - g.x) / r) ** 2 + (Y - g.y) ** 2);
+    for (const w of wells) v -= w.depth * blob(X, Y, w.x, w.y, w.size, w.stretch, w.angle);
+    for (const b of bumps) v += b.height * blob(X, Y, b.x, b.y, b.size, b.stretch, b.angle);
     return v;
   };
 }
