@@ -1,128 +1,21 @@
-.pageWrap {
-  position: relative;
-  overflow: clip;
-}
-
-.aboutContainer {
-  max-width: 860px;
-  margin: 0 auto;
-  padding: 3.5rem var(--page-pad) 2rem;
-}
-
-.pageHeader {
-  position: relative;
-  border-bottom: 1px solid var(--hairline-dark);
-  padding-bottom: 2rem;
-  margin-bottom: 2.5rem;
-}
-
-.eyebrow {
-  font-family: var(--sans);
-  font-size: 0.72rem;
-  font-weight: 500;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--maroon);
-  margin: 0 0 0.9rem;
-}
-
-.pageTitle {
-  font-family: var(--sans);
-  font-size: clamp(2.2rem, 4vw, 2.9rem);
-  font-weight: 500;
-  letter-spacing: -0.015em;
-  color: var(--ink);
-  margin: 0;
-}
+/* Uses the shared inner-page design language (src/app/ui/layout.module.css). */
 
 .section {
-  margin-bottom: 3rem;
+  composes: section from "../ui/layout.module.css";
 }
 
 .sectionTitle {
-  font-family: var(--sans);
-  font-size: 1.55rem;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  color: var(--ink);
-  margin: 0 0 1rem;
+  composes: sectionTitle from "../ui/layout.module.css";
 }
 
-.bodyText {
-  font-family: var(--sans);
-  font-size: 0.95rem;
-  font-weight: var(--text-weight);
-  line-height: 1.8;
-  color: var(--muted);
-  margin-bottom: 1rem;
+.text {
+  composes: text from "../ui/layout.module.css";
 }
 
-.bodyList {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 1rem;
+.list {
+  composes: list from "../ui/layout.module.css";
 }
 
-.bodyList li {
-  font-family: var(--sans);
-  font-size: 0.95rem;
-  font-weight: var(--text-weight);
-  line-height: 1.8;
-  color: var(--muted);
-  padding: 0.35rem 0 0.35rem 1.4rem;
-  position: relative;
-}
-
-.bodyList li::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 1.15rem;
-  width: 12px;
-  /* A border (not a 1px background) so browsers snap it to whole device pixels;
-     otherwise the dashes render at different darkness on scaled displays. */
-  border-top: 1px solid var(--maroon);
-}
-
-.logoGrid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 2rem 2.5rem;
-  margin-top: 1.5rem;
-  align-items: center;
-}
-
-.logoItem {
-  position: relative;
-  display: block;
-  width: 160px;
-  height: 70px;
-  transition: opacity 0.2s ease;
-}
-
-.logoItem:hover {
-  opacity: 0.7;
-}
-
-@media (max-width: 600px) {
-  .logoGrid {
-    gap: 1.5rem;
-  }
-
-  .logoItem {
-    width: 120px;
-    height: 55px;
-  }
-}
-
-.inlineLink {
-  color: var(--maroon);
-  text-decoration: none;
-  border-bottom: 1px solid rgba(var(--maroon-rgb), 0.35);
-  transition: border-color 0.2s ease, color 0.2s ease;
-}
-
-.inlineLink:hover {
-  color: var(--maroon-dark);
-  border-color: var(--maroon-dark);
+.link {
+  composes: link from "../ui/layout.module.css";
 }

@@ -1,9 +1,9 @@
 import React from "react";
-import styles from "./page.module.css";
-import NeuralBackground from "@/app/ornaments/NeuralBackground";
+import styles from "@/app/ui/syllabus.module.css";
+import PageLayout from "@/app/ui/PageLayout";
 
 export const metadata = {
-  title: "Economics of Transformative AI - AI Safety Group @ UChicago XLab",
+  title: "Economics of AI - AI Safety Group @ UChicago XLab",
   description:
     "A fellowship examining how economic forces shape AI safety decisions, and how economic tools can meaningfully reduce existential risk from AI.",
   keywords:
@@ -121,36 +121,35 @@ const weeklyReadings = [
 
 export default function EconomicsOfTransformativeAI() {
   return (
-    <div className={styles.pageWrap}>
-      <NeuralBackground transparent clearWidth={860} />
-      <div className={styles.fellowshipContainer}>
-        <header className={styles.pageHeader}>
-          
-          <h1 className={styles.pageTitle}>Economics of Transformative AI</h1>
-          <p className={styles.pageLede}>
-            As artificial intelligence advances, companies and countries face economic pressures to
-            prioritize capability development over safety, increasing catastrophic and existential
-            risks from AGI. This fellowship examines how economics shapes AI safety decisions, and
-            vice versa — using economic reasoning to explore future trajectories of AI and to
-            understand how tools such as markets, industrial policy, regulation, and international
-            coordination can meaningfully reduce existential risk. For a comprehensive overview of
-            the academic literature, we recommend Agrawal, Brynjolfsson, and Korinek&apos;s{" "}
-            <a
-              href="https://www.nber.org/books-and-chapters/economics-transformative-ai"
-              target="_blank"
-              rel="noopener noreferrer"
-              className={styles.readingLink}>
-              The Economics of Transformative AI
-            </a>
-            .
-          </p>
-        </header>
-        <div className={styles.weeklyReadings}>
-          {weeklyReadings.map((week, index) => (
-            <section key={index} className={styles.weekSection}>
+    <PageLayout
+      title="Economics of AI"
+      lede={
+        <p>
+          As artificial intelligence advances, companies and countries face economic pressures to
+          prioritize capability development over safety, increasing catastrophic and existential
+          risks from AGI. This fellowship examines how economics shapes AI safety decisions, and
+          vice versa — using economic reasoning to explore future trajectories of AI and to
+          understand how tools such as markets, industrial policy, regulation, and international
+          coordination can meaningfully reduce existential risk. For a comprehensive overview of the
+          academic literature, we recommend Agrawal, Brynjolfsson, and Korinek&apos;s{" "}
+          <a
+            href="https://www.nber.org/books-and-chapters/economics-transformative-ai"
+            target="_blank"
+            rel="noopener noreferrer">
+            The Economics of Transformative AI
+          </a>
+          .
+        </p>
+      }>
+      <div className={styles.weeklyReadings}>
+        {weeklyReadings.map((week, index) => (
+          <section key={index} className={styles.weekSection}>
+            <div className={styles.weekIntro}>
               <p className={styles.weekNum}>Week {String(week.week).padStart(2, "0")}</p>
               <h2 className={styles.weekTitle}>{week.title}</h2>
               <p className={styles.weekDescription}>{week.description}</p>
+            </div>
+            <div className={styles.weekBody}>
               {week.readings.length > 0 ? (
                 <ul className={styles.readingList}>
                   {week.readings.map((reading, readingIndex) => (
@@ -172,10 +171,10 @@ export default function EconomicsOfTransformativeAI() {
               ) : (
                 <p className={styles.noReadings}>Readings to be announced.</p>
               )}
-            </section>
-          ))}
-        </div>
+            </div>
+          </section>
+        ))}
       </div>
-    </div>
+    </PageLayout>
   );
 }

@@ -1,135 +1,63 @@
-.pageWrap {
-  position: relative;
-  overflow: clip;
-}
+/* Uses the shared inner-page design language (src/app/ui/layout.module.css). */
 
-.getInvolvedContainer {
-  max-width: 860px;
-  margin: 0 auto;
-  padding: 3.5rem var(--page-pad) 2rem;
-}
-
-.pageHeader {
-  position: relative;
-  border-bottom: 1px solid var(--hairline-dark);
-  padding-bottom: 2rem;
-  margin-bottom: 2.5rem;
-}
-
-.eyebrow {
-  font-family: var(--sans);
-  font-size: 0.72rem;
-  font-weight: 500;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--maroon);
-  margin: 0 0 0.9rem;
-}
-
-.pageTitle {
-  font-family: var(--sans);
-  font-size: clamp(2.2rem, 4vw, 2.9rem);
-  font-weight: 500;
-  letter-spacing: -0.015em;
-  color: var(--ink);
-  margin: 0;
+/* Six ways to get involved, two to a row. */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(3rem, 5vw, 4.5rem) clamp(2rem, 5.4vw, 5rem);
 }
 
 .section {
-  margin-bottom: 3rem;
-  padding-bottom: 3rem;
-  border-bottom: 1px solid var(--hairline);
-}
-
-.section:last-child {
-  border-bottom: none;
-  padding-bottom: 0;
+  /* Jumped to via /get-involved#apply: clear the menu bar. */
+  scroll-margin-top: calc(var(--nav-compact-height) + 1.5rem);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 .sectionTitle {
-  font-family: var(--sans);
-  font-size: 1.55rem;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  color: var(--ink);
-  margin: 0 0 1rem;
+  composes: sectionTitle from "../ui/layout.module.css";
 }
 
 .sectionText {
-  font-family: var(--sans);
-  font-size: 0.95rem;
-  font-weight: var(--text-weight);
-  line-height: 1.8;
-  color: var(--muted);
-  margin: 0 0 1rem;
+  composes: text from "../ui/layout.module.css";
+  flex: 1;
 }
 
-.bulletList {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 1rem;
+.link {
+  composes: link from "../ui/layout.module.css";
 }
 
-.bulletList li {
-  font-family: var(--sans);
-  font-size: 0.95rem;
-  font-weight: var(--text-weight);
-  line-height: 1.8;
-  color: var(--muted);
-  padding: 0.3rem 0 0.3rem 1.4rem;
-  position: relative;
-}
-
-.bulletList li::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 1.1rem;
-  width: 12px;
-  height: 1px;
-  background: var(--maroon);
-}
-
-.inlineLink {
-  color: var(--maroon);
-  text-decoration: none;
-  border-bottom: 1px solid rgba(var(--maroon-rgb), 0.35);
-  transition: border-color 0.2s ease, color 0.2s ease;
-}
-
-.inlineLink:hover {
-  color: var(--maroon-dark);
-  border-color: var(--maroon-dark);
-}
-
+/* Maroon = take part (join, apply); grey = go and learn more. */
 .actionButton {
-  display: inline-block;
-  margin-top: 0.4rem;
-  font-family: var(--sans);
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--maroon);
-  background: transparent;
-  border: 1px solid var(--maroon);
-  border-radius: 999px;
-  padding: 0.55rem 1.5rem;
-  text-decoration: none;
-  cursor: pointer;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  composes: buttonPrimary from "../ui/layout.module.css";
+  margin-top: clamp(1.1rem, 1.8vw, 1.6rem);
 }
 
-.actionButton:hover {
-  background-color: var(--maroon);
-  color: var(--paper);
+.buttonRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 clamp(0.75rem, 1.2vw, 1rem);
 }
 
-.applyMessage {
-  font-family: var(--sans);
-  font-size: 0.875rem;
-  font-weight: var(--text-weight);
+/* Inactive application button: same shape as a button, light grey with muted
+   text, no underline, no hover, not clickable. */
+.closedButton {
+  composes: button from "../ui/layout.module.css";
+  margin-top: clamp(1.1rem, 1.8vw, 1.6rem);
+  background: var(--hairline);
   color: var(--muted);
-  line-height: 1.65;
-  border-top: 1px solid var(--hairline);
-  padding-top: 1rem;
-  margin: 1.1rem 0 0;
+  text-decoration: none;
+  cursor: not-allowed;
+}
+
+.closedButton:hover {
+  transform: none;
+  filter: none;
+}
+
+@media (max-width: 800px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
 }

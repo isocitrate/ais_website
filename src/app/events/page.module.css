@@ -1,121 +1,95 @@
-.pageWrap {
-  position: relative;
-  overflow: clip;
-}
-
-.eventsContainer {
-  max-width: 860px;
-  margin: 0 auto;
-  padding: 3.5rem var(--page-pad) 2rem;
-}
-
-.pageHeader {
-  position: relative;
-  border-bottom: 1px solid var(--hairline-dark);
-  padding-bottom: 2rem;
-  margin-bottom: 2.5rem;
-}
-
-.eyebrow {
-  font-family: var(--sans);
-  font-size: 0.72rem;
-  font-weight: 500;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--maroon);
-  margin: 0 0 0.9rem;
-}
-
-.pageTitle {
-  font-family: var(--sans);
-  font-size: clamp(2.2rem, 4vw, 2.9rem);
-  font-weight: 500;
-  letter-spacing: -0.015em;
-  color: var(--ink);
-  margin: 0;
-}
-
-.pageLede {
-  font-family: var(--sans);
-  font-size: 1rem;
-  font-weight: var(--text-weight);
-  line-height: 1.75;
-  color: var(--muted);
-  max-width: 44rem;
-  margin: 1.2rem 0 0;
-}
-
-.inlineLink {
-  color: var(--maroon);
-  text-decoration: none;
-  border-bottom: 1px solid rgba(var(--maroon-rgb), 0.35);
-  transition: border-color 0.2s ease, color 0.2s ease;
-}
-
-.inlineLink:hover {
-  color: var(--maroon-dark);
-  border-color: var(--maroon-dark);
-}
+/* Uses the shared inner-page design language (src/app/ui/layout.module.css). */
 
 .section {
-  margin-bottom: 3.5rem;
+  composes: section from "../ui/layout.module.css";
 }
 
 .sectionTitle {
-  font-family: var(--sans);
-  font-size: 0.72rem;
-  font-weight: 500;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--faint);
-  margin: 0 0 0.5rem;
+  composes: sectionTitle from "../ui/layout.module.css";
+}
+
+.text {
+  composes: text from "../ui/layout.module.css";
+}
+
+.eventList {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(2rem, 3.5vw, 3rem);
 }
 
 .eventRow {
-  display: grid;
-  grid-template-columns: 170px 1fr;
-  gap: 1.5rem;
-  padding: 1.6rem 0;
-  border-bottom: 1px solid var(--hairline);
+  max-width: 50rem;
 }
 
-.eventRow:last-child {
-  border-bottom: none;
+.eventRow + .eventRow {
+  padding-top: clamp(2rem, 3.5vw, 3rem);
+  border-top: 1px solid var(--hairline-dark);
 }
 
-.eventDate {
+/* Heading with a link at the right end ("Add to Google Calendar ↗"). */
+.sectionHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.5rem 2rem;
+}
+
+.addLink {
+  composes: link from "../ui/layout.module.css";
   font-family: var(--sans);
-  font-size: 0.82rem;
-  font-weight: 400;
-  color: var(--faint);
-  margin: 0.3rem 0 0;
-}
-
-.eventBody {
-  min-width: 0;
+  font-size: clamp(1.05rem, 1.5vw, 1.375rem);
 }
 
 .eventName {
-  font-family: var(--sans);
-  font-size: 1.35rem;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  color: var(--ink);
   margin: 0;
+  font-family: var(--sans);
+  font-size: clamp(1.35rem, 2.78vw, 2.625rem);
+  font-weight: 400;
+  line-height: 1.29;
+  color: var(--ink);
+}
+
+/* The now mark at heading size would be too big. */
+.eventName :global(.nowMark) {
+  font-size: 0.6em;
+  vertical-align: 0.2em;
+  margin-right: 0.9em;
+}
+
+.eventLink {
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.eventLink span {
+  text-decoration: underline;
+  text-underline-offset: 0.12em;
+  text-decoration-thickness: 1px;
+  transition: color 0.2s ease, text-decoration-thickness 0.2s ease;
+}
+
+.eventLink:hover span {
+  color: var(--maroon);
+}
+
+.eventMeta {
+  margin: 0.35em 0 0;
+  font-family: var(--sans);
+  font-size: clamp(1rem, 1.85vw, 1.75rem);
+  font-weight: var(--text-weight);
+  line-height: 1.1;
+  color: var(--ink);
 }
 
 .eventDescription {
-  font-family: var(--sans);
-  font-size: 0.92rem;
-  font-weight: var(--text-weight);
-  line-height: 1.75;
-  color: var(--muted);
-  margin: 0.7rem 0 0;
-  max-width: 60ch;
+  composes: text from "../ui/layout.module.css";
+  margin-top: 1.2em;
 }
 
 .eventDescription p {
-  margin: 0 0 0.9rem;
+  margin: 0 0 0.9em;
 }
 
 .eventDescription p:last-child {
@@ -123,81 +97,12 @@
 }
 
 .eventDescription a {
-  color: var(--maroon);
+  color: var(--ink);
   text-decoration: underline;
-  text-underline-offset: 2px;
+  text-underline-offset: 0.12em;
+  text-decoration-thickness: 1px;
 }
 
-.eventLocation {
-  font-family: var(--sans);
-  font-size: 0.82rem;
-  font-weight: 500;
+.eventDescription a:hover {
   color: var(--maroon);
-  margin: 0.4rem 0 0;
-}
-
-.eventImageLink {
-  display: block;
-  width: min(260px, 100%);
-  margin-top: 1.1rem;
-}
-
-.eventImage {
-  display: block;
-  width: 100%;
-  height: auto;
-  border: 1px solid var(--hairline);
-  border-radius: var(--radius);
-}
-
-.registerLink {
-  display: inline-block;
-  margin-top: 1.1rem;
-  font-family: var(--sans);
-  font-weight: 500;
-  color: var(--maroon);
-  text-decoration: none;
-  white-space: nowrap;
-  padding-bottom: 0.25rem;
-  border-bottom: 1px solid currentColor;
-  transition: opacity 0.2s ease;
-}
-
-.registerLink span {
-  display: inline-block;
-  transition: transform 0.2s ease;
-}
-
-.registerLink:hover {
-  opacity: 0.8;
-}
-
-.registerLink:hover span {
-  transform: translateX(3px);
-}
-
-.learnMoreLink {
-  display: inline-block;
-  margin-top: 0.9rem;
-  font-family: var(--sans);
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--maroon);
-  text-decoration: none;
-  transition: opacity 0.2s ease;
-}
-
-.learnMoreLink:hover {
-  opacity: 0.72;
-}
-
-@media (max-width: 640px) {
-  .eventRow {
-    grid-template-columns: 1fr;
-    gap: 0.3rem;
-  }
-
-  .eventDate {
-    margin: 0;
-  }
 }

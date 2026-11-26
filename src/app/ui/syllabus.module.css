@@ -1,0 +1,126 @@
+/*
+  Fellowship syllabus pages (AI Safety Fundamentals, Policy & Governance,
+  Economics of Transformative AI, Strategy & Forecasting). Each week is two
+  columns on wide screens: the week's number, title and summary on the left,
+  its readings on the right. Uses the shared design language in layout.module.css.
+*/
+
+/* Strategy & Forecasting uses the "content" names for the same pieces. */
+.weeklyReadings,
+.weeklyContent {
+  display: flex;
+  flex-direction: column;
+}
+
+.weekSection {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: clamp(1.25rem, 2vw, 2rem) clamp(2rem, 5.4vw, 5rem);
+  padding: clamp(2rem, 3.5vw, 3.25rem) 0;
+  border-top: 1px solid var(--hairline-dark);
+}
+
+.weekSection:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.weekIntro,
+.weekBody {
+  min-width: 0;
+}
+
+.weekNum {
+  composes: meta from "./layout.module.css";
+  font-size: clamp(1.05rem, 1.39vw, 1.3125rem);
+}
+
+.weekTitle {
+  composes: sectionTitle from "./layout.module.css";
+  margin: 0.25em 0 0.5em;
+  font-size: clamp(1.7rem, 2.5vw, 2.375rem);
+}
+
+.weekDescription {
+  composes: text from "./layout.module.css";
+}
+
+/* Readings */
+
+.readingList,
+.contentList {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.1rem, 1.6vw, 1.5rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.groupTitle {
+  composes: subTitle from "./layout.module.css";
+  margin: clamp(1.75rem, 2.6vw, 2.5rem) 0 clamp(0.9rem, 1.3vw, 1.2rem);
+}
+
+.weekBody > .groupTitle:first-child {
+  margin-top: 0;
+}
+
+.readingItem,
+.contentItem {
+  min-width: 0;
+}
+
+.readingHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25em 0.75em;
+}
+
+.readingLink,
+.contentLink,
+.contentTitle {
+  font-family: var(--sans);
+  font-size: clamp(1.15rem, 1.6vw, 1.5rem);
+  font-weight: 400;
+  line-height: 1.3;
+  color: var(--ink);
+}
+
+.readingLink,
+.contentLink {
+  text-decoration: underline;
+  text-underline-offset: 0.12em;
+  text-decoration-thickness: 1px;
+  transition: color 0.2s ease, text-decoration-thickness 0.2s ease;
+}
+
+.readingLink:hover,
+.contentLink:hover {
+  color: var(--maroon);
+}
+
+.optionalTag,
+.timeFrame {
+  composes: meta from "./layout.module.css";
+}
+
+.readingDescription,
+.contentDescription {
+  composes: text from "./layout.module.css";
+  margin-top: 0.3em;
+  color: var(--muted);
+}
+
+.noReadings,
+.noContent {
+  composes: meta from "./layout.module.css";
+  font-size: clamp(1.05rem, 1.39vw, 1.3125rem);
+}
+
+@media (max-width: 800px) {
+  .weekSection {
+    grid-template-columns: 1fr;
+  }
+}

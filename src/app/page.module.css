@@ -1,180 +1,172 @@
+/*
+  Homepage, built from the Figma "ais_homepage" frame (designed at 1512px wide).
+  Type sizes are clamp()s whose max is the design size at 1512px; spacing
+  follows the design's vertical rhythm. Colours use the site's theme tokens so
+  dark mode keeps working; the maroon block uses the design's #900000.
+*/
+
+.container {
+  max-width: 1512px;
+  margin: 0 auto;
+  padding-inline: clamp(24px, 5.75vw, 87px);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* --- Shared type --- */
+
+.heading {
+  position: relative;
+  z-index: 1;
+  max-width: 11.7em;
+  margin: 0;
+  font-family: var(--serif);
+  font-size: clamp(2.1rem, 4.23vw, 4rem);
+  font-weight: 600;
+  line-height: 1;
+  color: var(--ink);
+}
+
+.wideHeading {
+  max-width: 15.5em;
+}
+
+.body {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  font-size: clamp(1.1rem, 2.12vw, 2rem);
+  font-weight: var(--text-weight);
+  line-height: 1.12;
+  color: var(--ink);
+}
+
+.small {
+  margin: 0;
+  font-size: clamp(1rem, 1.85vw, 1.75rem);
+  font-weight: var(--text-weight);
+  line-height: 1.1;
+  color: var(--ink);
+}
+
+.sectionLinkRow {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: clamp(1.25rem, 2.6vw, 39px);
+}
+
+.sectionLink {
+  font-size: clamp(1.2rem, 2.38vw, 2.25rem);
+  line-height: 1.5;
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 0.12em;
+  text-decoration-thickness: 1px;
+  transition: color 0.2s ease, text-decoration-thickness 0.2s ease;
+}
+
+.sectionLink:hover {
+  color: var(--maroon);
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
 /* --- Hero --- */
 
 .hero {
   position: relative;
   overflow: hidden;
   display: flex;
-  align-items: center;
-  /* How far the affiliation rule sits above its natural spot. Scales with screen
-     height; the same amount is added below so the sections after don't move. */
-  --affiliation-lift: clamp(1rem, 3vh, 2rem);
-  min-height: calc(100svh - var(--nav-height));
-  padding: clamp(3rem, 7vh, 5.5rem) 0 calc(5rem + var(--affiliation-lift));
+  align-items: flex-end;
+  /* Extends up under the floating menu so the network background runs behind it. */
+  margin-top: calc(-1 * var(--nav-height));
+  /* A little shorter than the screen, so the next section's heading peeks above
+     the fold and signals there's more below. */
+  --peek: clamp(110px, 16svh, 170px);
+  min-height: clamp(560px, calc(100svh - var(--peek)), 900px);
+  padding: calc(var(--nav-height) + 2.5rem) 0 clamp(2.5rem, 5vw, 80px);
+  box-sizing: border-box;
 }
 
-.hero::before {
-  content: none;
-}
-
+/* Fades the network background into the page, as in the design. */
 .hero::after {
-  content: none;
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 276px;
+  background: linear-gradient(to bottom, rgba(var(--paper-rgb), 0), var(--paper));
+  pointer-events: none;
+  z-index: 0;
 }
 
-/* Shares the header's 1280px column so the hero's left edge lines up with the logo. */
 .heroInner {
   position: relative;
   z-index: 1;
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 0 var(--page-pad);
-  width: 100%;
-  transform: translateY(-2.5vh);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 2rem;
 }
 
-.heroBrand {
+/* Font size here is the tagline's, so the column width (19.5em) is measured in
+   tagline type: three lines, as in the design. The lockup fills the same width. */
+.heroText {
+  width: min(100%, 19.5em);
+  font-size: clamp(1.25rem, 2.78vw, 2.625rem);
+}
+
+/* "Next event" at the top of the hero's right column, above the buttons.
+   Same treatment as the "Upcoming events" list (underlined title + ↗), not a
+   box: boxes are for programs. */
+.heroEvent {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  width: fit-content;
-  color: var(--maroon);
-  font-family: var(--serif);
-  line-height: 0.9;
-}
-
-.heroBrandName {
-  font-size: clamp(4rem, 7.5vw, 7.25rem);
-  font-weight: 500;
-  letter-spacing: -0.045em;
-  white-space: nowrap;
-}
-
-.heroBrandAffiliation {
-  margin-top: 0.42em;
-  padding-left: 0.08em;
-  font-size: clamp(1.65rem, 3.1vw, 3rem);
-  font-weight: 500;
-  letter-spacing: -0.025em;
-  line-height: 1;
-}
-
-.heroLede {
-  margin: 2.75rem 0 0;
-  font-size: clamp(1.15rem, 1.5vw, 1.35rem);
-  max-width: 42rem;
-}
-
-/* --- Pillars --- */
-
-.pillarsSection {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2.5rem var(--page-pad) 2rem;
-}
-
-/* Matches the "Join us in shaping the future of AI." heading below. */
-.sectionTitle {
-  font-family: var(--serif);
-  font-size: clamp(1.5rem, 2.4vw, 2rem);
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  color: var(--ink);
-  margin: 0 0 2rem;
-}
-
-.pillars {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: clamp(2rem, 4vw, 4rem);
-}
-
-.pillar {
-  border-top: 1px solid var(--hairline-dark);
-  padding-top: 1.6rem;
-}
-
-.pillarTitle {
-  font-family: var(--sans);
-  font-size: 1.5rem;
-  letter-spacing: -0.01em;
-  font-weight: 600;
-  color: var(--ink);
-  margin: 0;
-}
-
-.pillarDescription {
-  font-family: var(--sans);
-  font-size: 0.92rem;
+  gap: 0.25em;
+  margin-bottom: clamp(0.75rem, 1.6vw, 1.5rem);
+  padding: 0 14px;
+  font-size: clamp(0.95rem, 1.2vw, 1.125rem);
   font-weight: var(--text-weight);
-  line-height: 1.7;
-  color: var(--muted);
-  margin: 0.8rem 0 1.2rem;
-}
-
-/* Same size as the description; same hover as the hero CTA, minus the underline. */
-.pillarLink {
-  font-family: var(--sans);
-  font-size: 0.92rem;
-  font-weight: 500;
-  color: var(--maroon);
+  line-height: 1.3;
+  color: var(--ink);
   text-decoration: none;
-  transition: opacity 0.2s ease;
 }
 
-.pillarLink span {
-  display: inline-block;
-  transition: transform 0.2s ease;
+.heroEventLabel {
+  color: var(--muted);
 }
 
-.pillarLink:hover {
-  opacity: 0.8;
+.heroEventName {
+  font-size: 1.15em;
+  text-decoration: underline;
+  text-underline-offset: 0.12em;
+  text-decoration-thickness: 1px;
+  transition: color 0.2s ease, text-decoration-thickness 0.2s ease;
 }
 
-.pillarLink:hover span {
-  transform: translateX(3px);
+.heroEvent:hover .heroEventName {
+  color: var(--maroon);
+  text-decoration-thickness: 2px;
 }
 
-@media screen and (max-width: 900px) {
-  .pillars {
-    grid-template-columns: 1fr;
-    gap: 2rem;
-  }
-}
-
-@media screen and (max-width: 640px) {
-  .hero {
-    padding-top: 3rem;
-  }
-
-  .heroCtas {
-    gap: 1.2rem;
-  }
-
-  .heroAffiliation {
-    margin-top: calc(3rem - var(--affiliation-lift));
-  }
-}
-
-@media screen and (max-width: 700px) {
-  .heroBrandName {
-    font-size: clamp(2.75rem, 13vw, 4rem);
-    white-space: normal;
-  }
-
-  .heroBrandAffiliation {
-    font-size: clamp(1.35rem, 6vw, 1.75rem);
-  }
-
-  .heroLockupLight,
-  .heroLockupDark {
-    width: min(100%, 520px);
-  }
+/* The lockup is the homepage's <h1>. */
+.heroBrand {
+  margin: 0;
 }
 
 .heroLockupLight,
 .heroLockupDark {
-  width: clamp(520px, 55vw, 820px);
+  display: block;
+  width: 100%;
   height: auto;
-  object-fit: contain;
 }
 
 .heroLockupDark {
@@ -189,37 +181,494 @@
   display: block;
 }
 
-.heroCtas {
+.heroLede {
+  margin: clamp(1.25rem, 2.1vw, 32px) 0 0;
+  font-size: 1em;
+  font-weight: var(--text-weight);
+  line-height: 1.17;
+  color: var(--ink);
+}
+
+.heroButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 21px;
+  flex-shrink: 0;
+  /* At least the design's width, growing to fit the longest label on one line. */
+  width: max-content;
+  min-width: clamp(200px, 19.8vw, 300px);
+  /* Lines the buttons up beside the tagline, as in the design. */
+  margin-bottom: 0.4rem;
+}
+
+.heroButton {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  height: clamp(44px, 3.64vw, 55px);
+  padding: 0 14px;
+  font-size: clamp(1.15rem, 2.12vw, 2rem);
+  text-decoration: underline;
+  text-underline-offset: 0.12em;
+  text-decoration-thickness: 1px;
+  transition: transform 0.2s ease, filter 0.2s ease, text-decoration-thickness 0.2s ease;
+}
+
+/* Same as the shared buttons: rise and darken on hover, press on click. */
+.heroButton:hover {
+  transform: translateY(-2px);
+  filter: brightness(0.9);
+  text-decoration-thickness: 2px;
+}
+
+.heroButton:active {
+  transform: translateY(0);
+  filter: brightness(0.82);
+}
+
+.heroButtonPrimary {
+  background: #900000;
+  color: #fff;
+}
+
+/* --- "Transformative AI could arrive soon..." + chart --- */
+
+.trajectory {
+  margin-top: clamp(1.5rem, 3.1vw, 47px);
+}
+
+.trajectoryBody {
+  max-width: 35.7em;
+  margin-top: clamp(1rem, 1.9vw, 29px);
+}
+
+/* --- Risks --- */
+
+.risks {
+  margin-top: clamp(2rem, 2.85vw, 43px);
+}
+
+.riskGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 5.4%;
+  row-gap: clamp(1.25rem, 1.9vw, 29px);
+  max-width: 1273px;
+  margin-top: clamp(1.5rem, 2.8vw, 42px);
+}
+
+.riskTitle {
+  margin: 0 0 clamp(4px, 0.6vw, 9px);
+  font-family: var(--sans);
+  font-size: clamp(1.35rem, 2.78vw, 2.625rem);
+  font-weight: 400;
+  line-height: 1.43;
+  color: var(--ink);
+}
+
+/* --- Programs + events + photos share the faint globe behind them --- */
+
+.globeWrap {
+  position: relative;
+  overflow: hidden;
+}
+
+.globe {
+  position: absolute;
+  left: 40.28%;
+  top: 28.9vw;
+  width: 71.43%;
+  height: auto;
+  opacity: 0.05;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.programs,
+.events {
+  position: relative;
+  z-index: 1;
+}
+
+.programs {
+  padding-top: clamp(2.5rem, 3.7vw, 56px);
+  container-type: inline-size;
+}
+
+.programsBody {
+  max-width: 31em;
+  margin-top: clamp(1rem, 2.25vw, 34px);
+}
+
+/* Every card is the same fixed square whatever its text. Sizes inside are
+   proportions of the design's 350px card (--card = one card's width), so the
+   text always fits the square. */
+.programGrid {
+  --cols: 4;
+  --gap: clamp(1rem, 2.6vw, 39px);
+  --card: calc((100cqw - (var(--cols) - 1) * var(--gap)) / var(--cols));
+  display: grid;
+  grid-template-columns: repeat(var(--cols), var(--card));
+  gap: var(--gap);
+  margin-top: clamp(1.5rem, 3.3vw, 50px);
+}
+
+.programCard {
+  position: relative;
+  width: var(--card);
+  height: var(--card);
+  padding: calc(var(--card) * 0.054) calc(var(--card) * 0.063);
+  overflow: hidden;
+  background: var(--hairline-dark);
+  box-sizing: border-box;
+  transition: transform 0.25s ease, background-color 0.25s ease;
+}
+
+/* Same hover as every clickable grey box (ui .boxInteractive). */
+.programCard:hover,
+.programCard:focus-within {
+  transform: translateY(-4px);
+  background: color-mix(in srgb, var(--hairline-dark), var(--ink) 7%);
+}
+
+.programTitle {
+  height: calc(var(--card) * 0.389);
+  margin: 0;
+  font-family: var(--sans);
+  font-size: min(calc(var(--card) * 0.137), 3rem);
+  font-weight: 400;
+  line-height: 1.25;
+}
+
+/* Description starts 155/350 of the way down, as in the design. */
+.programCard .small {
+  font-size: min(calc(var(--card) * 0.08), 1.75rem);
+  line-height: 1.1;
+}
+
+/* Each title is set on two lines, as in the design. */
+.programTitle span {
+  display: block;
+}
+
+.programTitle a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 0.12em;
+  text-decoration-thickness: 1px;
+  transition: color 0.2s ease, text-decoration-thickness 0.2s ease;
+}
+
+/* Whole card is clickable. */
+.programTitle a::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.programCard:hover .programTitle a {
+  color: var(--maroon);
+}
+
+.events {
+  padding-top: clamp(3rem, 4.6vw, 70px);
+}
+
+.eventList {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.5rem, 2.6vw, 39px);
+  margin: clamp(1.75rem, 3.5vw, 53px) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.eventLink {
+  font-size: clamp(1.35rem, 2.78vw, 2.625rem);
+  line-height: 1.29;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.eventName {
+  text-decoration: underline;
+  text-underline-offset: 0.12em;
+  text-decoration-thickness: 1px;
+  transition: color 0.2s ease, text-decoration-thickness 0.2s ease;
+}
+
+.eventLink:hover .eventName {
+  color: var(--maroon);
+}
+
+.eventMeta {
+  margin: clamp(4px, 0.6vw, 9px) 0 0;
+  font-size: clamp(1rem, 1.85vw, 1.75rem);
+  font-weight: var(--text-weight);
+  line-height: 1;
+  color: var(--ink);
+}
+
+.eventsEmpty {
+  margin-top: clamp(1.75rem, 3.5vw, 53px);
+}
+
+/* Photo strip: full-bleed, drifting slowly left in a seamless loop. */
+.photos {
+  --unit: calc(100vw / 1512);
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  margin-top: clamp(3rem, 6.6vw, 100px);
+}
+
+.photoTrack {
+  display: flex;
+  align-items: center;
+  width: max-content;
+  /* ~15 s per photo (about 35 px/s at full width: slow enough to stay ambient).
+     The track holds 3 copies and moves by one copy per loop. */
+  animation: photoScroll calc(var(--count) * 15s) linear infinite;
+}
+
+.photos:hover .photoTrack {
+  animation-play-state: paused;
+}
+
+@keyframes photoScroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(calc(-100% / 3));
+  }
+}
+
+/* Reduced motion: a still strip (the global rule would make it flicker). */
+@media (prefers-reduced-motion: reduce) {
+  .photoTrack {
+    animation: none !important;
+  }
+}
+
+.photo {
+  display: block;
+  flex-shrink: 0;
+  width: calc(var(--w) * var(--unit));
+  height: auto;
+  /* Spacing as margin (not gap) so each copy is exactly 1/3 of the track. */
+  margin-right: calc(58 * var(--unit));
+}
+
+/* --- Organisations --- */
+
+.orgs {
+  margin-top: clamp(1.5rem, 2.4vw, 36px);
+}
+
+.orgsHeading {
+  max-width: 11.6em;
+}
+
+.logos {
+  position: relative;
+  width: 97.9%;
+  margin: clamp(1rem, 1.6vw, 24px) 0 0 -1.27%;
+  padding: 0;
+  list-style: none;
+}
+
+.logo {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: var(--w);
+  height: var(--h);
+}
+
+.logoImage {
+  object-fit: cover;
+}
+
+.mats {
+  position: absolute;
+  inset: 0;
+}
+
+.matsIcon {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 25.83%;
+  mask-image: url("/home/mats-mask.svg");
+  mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+  -webkit-mask-image: url("/home/mats-mask.svg");
+  -webkit-mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+}
+
+.matsIcon img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.matsText {
+  position: absolute;
+  top: 14.64%;
+  left: 31.86%;
+  display: block;
+  width: 68.03%;
+  height: 69.98%;
+}
+
+/* --- Get involved (maroon block) --- */
+
+.getInvolved {
+  position: relative;
+  overflow: hidden;
+  margin-top: clamp(4rem, 6.75vw, 102px);
+  /* Sits flush on the footer (cancels the footer's 5rem top margin). */
+  margin-bottom: -5rem;
+  padding: clamp(3rem, 5vw, 75px) 0 clamp(3rem, 4.5vw, 68px);
+  background: #900000;
+  color: #fff;
+}
+
+.getInvolvedInner {
+  position: relative;
+  z-index: 1;
+}
+
+/* The site-wide maroon focus ring disappears on this maroon block. */
+.getInvolved :focus-visible {
+  outline-color: #fff;
+}
+
+.getInvolvedTitle {
+  max-width: 9.4em;
+  margin: 0;
+  font-family: var(--serif);
+  font-size: clamp(2.5rem, 5.36vw, 5.0625rem);
+  font-weight: 600;
+  line-height: 0.89;
+  color: #fff;
+}
+
+.getInvolvedBody {
+  max-width: 26.4em;
+  margin: clamp(1.5rem, 3vw, 45px) 0 0;
+  font-size: clamp(1.15rem, 2.38vw, 2.25rem);
+  font-weight: var(--text-weight);
+  line-height: 1;
+}
+
+.getInvolvedBody a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 0.12em;
+  text-decoration-thickness: 1px;
+}
+
+.getInvolvedLinks {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 1.75rem;
-  margin-top: 1.75rem;
-  font-family: var(--sans);
+  gap: clamp(0.9rem, 1.46vw, 22px);
+  margin: clamp(1.75rem, 3.4vw, 51px) 0 0;
+  padding: 0;
+  list-style: none;
 }
 
-.ctaPrimary {
-  color: var(--maroon);
-  font-family: var(--sans);
-  font-size: clamp(1.15rem, 1.5vw, 1.35rem);
-  font-weight: 500;
-  line-height: 1.65;
+.getInvolvedLinks a {
+  font-size: clamp(1.35rem, 2.78vw, 2.625rem);
+  line-height: 1;
+  color: #fff;
   text-decoration: none;
-  white-space: nowrap;
-  padding-bottom: 0;
-  border-bottom: 0;
   transition: opacity 0.2s ease;
 }
 
-.ctaPrimary span {
-  display: inline-block;
-  transition: transform 0.2s ease;
+.getInvolvedLinks a span {
+  text-decoration: underline;
+  text-underline-offset: 0.12em;
+  text-decoration-thickness: 1px;
 }
 
-.ctaPrimary:hover {
+.getInvolvedLinks a:hover {
   opacity: 0.8;
 }
 
-.ctaPrimary:hover span {
-  transform: translateX(3px);
+/* --- Responsive --- */
+
+/* Breakpoints match the inner pages: 2-column layouts stack at 800px,
+   4-column grids go to 2 at 800px and 1 at 520px. */
+@media (max-width: 800px) {
+  .programGrid {
+    --cols: 2;
+  }
+
+  .heroInner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .heroButtons {
+    width: min(300px, 100%);
+  }
+
+  .riskGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 700px) {
+  .photos {
+    --unit: calc(100vw / 1000);
+  }
+
+  /* Absolute arrangement gets too small on phones; wrap the logos instead. */
+  .logos {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 1.25rem 1.75rem;
+    width: 100%;
+    margin-left: 0;
+    aspect-ratio: auto !important;
+  }
+
+  .logo {
+    position: relative;
+    left: auto;
+    top: auto;
+    width: calc(var(--w) * 1.9);
+    height: auto;
+    aspect-ratio: var(--ar);
+  }
+}
+
+@media (max-width: 520px) {
+  .programGrid {
+    --cols: 1;
+  }
+
+  /* Single column: same-size cards, but shorter than square and with capped type. */
+  .programCard {
+    height: calc(var(--card) * 0.62);
+  }
+
+  .programTitle {
+    height: auto;
+    margin-bottom: 0.6rem;
+    font-size: 1.6rem;
+  }
+
+  .programCard .small {
+    font-size: 1.05rem;
+  }
 }

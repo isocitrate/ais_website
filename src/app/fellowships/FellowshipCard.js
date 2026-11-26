@@ -1,53 +1,53 @@
-"use client";
-import { useState } from "react";
 import Link from "next/link";
 import styles from "./page.module.css";
 
-export default function FellowshipCard({ name, description, syllabusHref, applyHref, comingSoonText = "Syllabus coming soon" }) {
-  const [showMessage, setShowMessage] = useState(false);
-
+// A fellowship is a featured, actionable item, so it gets the grey box — and,
+// like the homepage program cards, its title is the link (to the syllabus).
+// Without an application link it says so plainly instead of offering an
+// "Apply" button that only reveals a "closed" message.
+function SyllabusLink({ href, className, children }) {
+  if (href.startsWith("/")) {
+    return (
+      <Link href={href} className={className}>
+        {children}
+      </Link>
+    );
+  }
   return (
-    <div className={styles.fellowshipCard}>
-      <h2 className={styles.fellowshipName}>{name}</h2>
+    <a href={href} target="_blank" rel="noopener noreferrer" className={className}>
+      {children}
+    </a>
+  );
+}
+
+// No syllabusHref (e.g. the paper reading group, which picks papers each week): no syllabus link.
+export default function FellowshipCard({ name, description, syllabusHref, applyHref }) {
+  return (
+    <div className={syllabusHref ? styles.fellowshipCardLink : styles.fellowshipCard}>
+      <h2 className={styles.fellowshipName}>
+        {syllabusHref ? (
+          <SyllabusLink href={syllabusHref} className={styles.fellowshipNameLink}>
+            {name}
+          </SyllabusLink>
+        ) : (
+          name
+        )}
+      </h2>
       <p className={styles.fellowshipDescription}>{description}</p>
       <div className={styles.cardFooter}>
-        {syllabusHref?.startsWith("/") ? (
-          <Link href={syllabusHref} className={styles.syllabusLink}>
-            View Syllabus <span aria-hidden="true">→</span>
-          </Link>
-        ) : syllabusHref ? (
-          <a href={syllabusHref} target="_blank" rel="noopener noreferrer" className={styles.syllabusLink}>
-            View Syllabus <span aria-hidden="true">→</span>
-          </a>
-        ) : (
-          <Link href="/coming-soon" className={styles.comingSoonLink}>
-            {comingSoonText} <span aria-hidden="true">→</span>
-          </Link>
+        {syllabusHref && (
+          <SyllabusLink href={syllabusHref} className={styles.syllabusLink}>
+            View syllabus
+          </SyllabusLink>
         )}
         {applyHref ? (
           <a href={applyHref} target="_blank" rel="noopener noreferrer" className={styles.applyButton}>
             Apply
           </a>
         ) : (
-          <button className={styles.applyButton} onClick={() => setShowMessage(!showMessage)}>
-            Apply
-          </button>
+          <span className={styles.applicationsClosed}>Applications closed</span>
         )}
       </div>
-      {showMessage && (
-        <p className={styles.applyMessage}>
-          This fellowship program is not currently accepting applications. If you want to get
-          updated when applications open, join our{" "}
-          <a
-            href="https://lists.uchicago.edu/web/info/aisafety"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.applyMessageLink}>
-            mailing list
-          </a>
-          .
-        </p>
-      )}
     </div>
   );
 }

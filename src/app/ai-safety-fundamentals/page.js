@@ -1,9 +1,9 @@
 import React from "react";
-import styles from "./page.module.css";
-import NeuralBackground from "@/app/ornaments/NeuralBackground";
+import styles from "@/app/ui/syllabus.module.css";
+import PageLayout from "@/app/ui/PageLayout";
 
 export const metadata = {
-  title: "XLab AI Safety Fundamentals",
+  title: "AI Safety Fundamentals - AI Safety Group @ UChicago XLab",
   description: "This XLab program provides a structured exploration of key AI safety topics.",
   keywords: "AI safety, AI alignment, University of Chicago, x-risk lab, AI research",
 };
@@ -22,19 +22,19 @@ const weeklyReadings = [
           "A concise primer on what machine learning is and how models learn from data rather than explicit rules.",
       },
       {
-        title: "Neural Networks - 3Blue1Brown",
+        title: "Neural Networks — 3Blue1Brown",
         link: "https://www.youtube.com/playlist?list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi",
         description:
           "A visually-driven video series building intuition for what neural networks are, how they represent functions, and how gradient descent trains them.",
       },
       {
-        title: "Deep Dive into LLMs like ChatGPT - Karpathy",
+        title: "Deep Dive into LLMs like ChatGPT — Karpathy",
         link: "https://www.youtube.com/watch?v=7xTGNNLPyMI",
         description:
           "A long-form walkthrough of the entire LLM pipeline: pretraining, tokenization, fine-tuning, and RLHF.",
       },
       {
-        title: "Intro to Large Language Models - Karpathy",
+        title: "Intro to Large Language Models — Karpathy",
         link: "https://www.youtube.com/watch?v=zjkBMFhNj_g",
         description:
           "A ~1-hour talk giving a compressed, accessible overview of what LLMs are, how they're trained, and where they're headed.",
@@ -330,53 +330,53 @@ const weeklyReadings = [
 
 export default function Fellowship() {
   return (
-    <div className={styles.pageWrap}>
-      <NeuralBackground transparent clearWidth={860} />
-      <div className={styles.fellowshipContainer}>
-      <header className={styles.pageHeader}>
-        
-        <h1 className={styles.pageTitle}>AI Safety Fundamentals</h1>
-        <p className={styles.pageLede}>
+    <PageLayout
+      title="AI Safety Fundamentals"
+      lede={
+        <p>
           Our flagship fellowship introduces fellows from any background to the core ideas in AI
-          safety, with a particular focus on existential risk from advanced AI. By the program&apos;s
-          end, fellows will have a working understanding of the field and the foundation to dive
-          deeper into the subareas that interest them.
+          safety, with a particular focus on existential risk from advanced AI. By the
+          program&apos;s end, fellows will have a working understanding of the field and the
+          foundation to dive deeper into the subareas that interest them.
         </p>
-      </header>
+      }>
       <div className={styles.weeklyReadings}>
         {weeklyReadings.map((week, index) => (
           <section key={index} className={styles.weekSection}>
-            <p className={styles.weekNum}>Week {String(week.week).padStart(2, "0")}</p>
-            <h2 className={styles.weekTitle}>{week.title}</h2>
-            <p className={styles.weekDescription}>{week.description}</p>
-            {week.readings.length > 0 ? (
-              <ul className={styles.readingList}>
-                {week.readings.map((reading, readingIndex) => (
-                  <li key={readingIndex} className={styles.readingItem}>
-                    <span className={styles.readingHead}>
-                      <a
-                        href={reading.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={styles.readingLink}>
-                        {reading.title}
-                      </a>
-                      {reading.optional && <span className={styles.optionalTag}>Optional</span>}
-                      {reading.timeFrame && (
-                        <span className={styles.timeFrame}>{reading.timeFrame}</span>
-                      )}
-                    </span>
-                    <p className={styles.readingDescription}>{reading.description}</p>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className={styles.noReadings}>No readings available for this week yet.</p>
-            )}
+            <div className={styles.weekIntro}>
+              <p className={styles.weekNum}>Week {String(week.week).padStart(2, "0")}</p>
+              <h2 className={styles.weekTitle}>{week.title}</h2>
+              <p className={styles.weekDescription}>{week.description}</p>
+            </div>
+            <div className={styles.weekBody}>
+              {week.readings.length > 0 ? (
+                <ul className={styles.readingList}>
+                  {week.readings.map((reading, readingIndex) => (
+                    <li key={readingIndex} className={styles.readingItem}>
+                      <span className={styles.readingHead}>
+                        <a
+                          href={reading.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={styles.readingLink}>
+                          {reading.title}
+                        </a>
+                        {reading.timeFrame && (
+                          <span className={styles.timeFrame}>{reading.timeFrame}</span>
+                        )}
+                        {reading.optional && <span className={styles.optionalTag}>Optional</span>}
+                      </span>
+                      <p className={styles.readingDescription}>{reading.description}</p>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className={styles.noReadings}>Readings to be announced.</p>
+              )}
+            </div>
           </section>
         ))}
       </div>
-      </div>
-    </div>
+    </PageLayout>
   );
 }

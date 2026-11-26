@@ -1,188 +1,156 @@
+/* Fixed so it can float over the homepage hero. Three states:
+   - top of page: no background, full mockup size;
+   - .scrolled: compact bar with a translucent background;
+   - .hidden: slid out of view (while scrolling down). */
 .header {
-  position: sticky;
+  --bar-height: var(--nav-height);
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
   z-index: 100;
-  background: rgba(var(--paper-rgb), 0.85);
-  backdrop-filter: blur(12px) saturate(1.2);
-  -webkit-backdrop-filter: blur(12px) saturate(1.2);
-  border-bottom: 1px solid var(--hairline);
+  background: transparent;
+  border-bottom: 1px solid transparent;
+  transition: transform 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
 }
 
-.container {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 0 var(--page-pad);
+.scrolled {
+  --bar-height: var(--nav-compact-height);
+  background: rgba(var(--paper-rgb), 0.88);
+  backdrop-filter: blur(12px) saturate(1.2);
+  -webkit-backdrop-filter: blur(12px) saturate(1.2);
+  border-bottom-color: var(--hairline);
+}
+
+.hidden {
+  transform: translateY(-100%);
+}
+
+.spacer {
   height: var(--nav-height);
+}
+
+/* Same column as the homepage (design: 1512px frame, ~87px side margins). */
+.container {
+  max-width: 1512px;
+  transition: height 0.3s ease;
+  margin: 0 auto;
+  padding: 0 clamp(24px, 5.75vw, 87px);
+  height: var(--bar-height);
   display: flex;
   justify-content: space-between;
   align-items: center;
+  box-sizing: border-box;
 }
 
-.logoContainer {
-  display: flex;
-  align-items: center;
-  gap: 0;
-  text-decoration: none;
-  flex-shrink: 0;
-}
-
-.logo {
-  width: 280px;
-  height: auto;
-  object-fit: contain;
-}
-
-.logoDark {
-  display: none;
-}
-
-.logoLight {
-  display: block;
-}
-
-:global(:root[data-theme="dark"]) .logoLight {
-  display: none;
-}
-
-:global(:root[data-theme="dark"]) .logoDark {
-  display: block;
-}
-
-/* --- Desktop navigation --- */
+/* --- Desktop navigation (Figma: 32px underlined links, current page bold) --- */
 
 .navList {
   display: flex;
-  gap: 2rem;
+  gap: 2em;
   align-items: center;
   list-style-type: none;
   margin: 0;
   padding: 0;
+  font-family: var(--sans);
+  font-size: clamp(1.1rem, 2.12vw, 2rem);
+  transition: font-size 0.3s ease;
+}
+
+.scrolled .navList {
+  font-size: clamp(1.15rem, 1.72vw, 1.625rem);
+}
+
+/* Dropdown shrinks less than the bar text when compact (~22px at full width). */
+.scrolled .dropdown {
+  font-size: 0.85em;
 }
 
 .navItem {
   position: relative;
   display: flex;
   align-items: center;
-  height: var(--nav-height);
-}
-
-.navLink,
-.ctaLink {
-  position: relative;
-}
-
-/* Underline that draws in from the left on hover. */
-.navLink::after,
-.ctaLink::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -4px;
-  height: 1px;
-  background: currentColor;
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.085s ease;
-}
-
-.navLink:hover::after,
-.ctaLink:hover::after {
-  transform: scaleX(1);
+  height: var(--bar-height);
 }
 
 .navLink {
-  font-family: var(--sans);
-  font-size: 0.9375rem;
+  font: inherit;
   font-weight: 400;
-  color: var(--muted);
-  text-decoration: none;
-  transition: color 0.2s ease;
+  line-height: 1.17;
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 0.12em;
+  text-decoration-thickness: 1px;
   white-space: nowrap;
+  transition: color 0.2s ease, text-decoration-thickness 0.2s ease;
 }
 
-.navLink:hover {
-  color: var(--ink);
+.navButton {
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.navLink:hover,
+.dropdownOpen .navButton {
+  color: var(--maroon);
 }
 
 .navLinkActive {
-  color: var(--maroon);
-  font-weight: 500;
+  font-weight: 900;
 }
 
-.navLinkActive:hover {
-  color: var(--maroon);
-}
-
-.caret {
-  display: inline-block;
-  font-size: 0.65em;
-  margin-left: 0.35em;
-  transform: translateY(-1px);
-  transition: transform 0.2s ease;
-}
-
-.dropdownParent:hover .caret {
-  transform: translateY(1px);
-}
-
-.ctaLink {
-  font-family: var(--sans);
-  font-size: 0.9375rem;
-  font-weight: 500;
-  color: var(--maroon);
-  text-decoration: none;
-  white-space: nowrap;
-  transition: opacity 0.2s ease;
-}
-
-.ctaLink:hover {
-  opacity: 0.72;
-}
-
-/* --- Dropdown --- */
+/* --- Dropdown (Figma: grey panel, underlined 24px links) --- */
 
 .dropdown {
   position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translate(-50%, -6px);
-  background: var(--paper);
-  list-style: none;
-  padding: 0.4rem 0;
+  top: calc(50% + 0.75em);
+  left: 0.69em;
+  min-width: 10.9em;
   margin: 0;
-  border: 1px solid var(--hairline-dark);
-  border-radius: 6px;
-  box-shadow: 0 6px 16px rgba(var(--ink-rgb), 0.035);
-  min-width: 230px;
+  padding: 0.25em 0.44em 0.6em;
+  list-style: none;
+  background: var(--hairline-dark);
+  font-size: 0.75em;
   opacity: 0;
   visibility: hidden;
+  transform: translateY(-4px);
   transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s ease;
   z-index: 100;
 }
 
-.dropdownParent:hover .dropdown,
-.dropdownParent:focus-within .dropdown {
+/* Hover bridge so the panel doesn't close while moving the pointer onto it. */
+.dropdown::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 100%;
+  height: 0.75em;
+}
+
+.dropdownOpen .dropdown {
   opacity: 1;
   visibility: visible;
-  transform: translate(-50%, 0);
+  transform: translateY(0);
 }
 
 .dropdownLink {
   display: block;
-  padding: 0.55rem 1.1rem;
-  font-family: var(--sans);
-  font-size: 0.875rem;
-  font-weight: 400;
-  color: var(--muted);
-  text-decoration: none;
+  font-size: 1em;
+  line-height: 1.17;
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 0.12em;
+  text-decoration-thickness: 1px;
   white-space: nowrap;
-  transition: color 0.15s ease, background-color 0.15s ease;
+  transition: color 0.15s ease, text-decoration-thickness 0.15s ease, transform 0.15s ease;
 }
 
 .dropdownLink:hover {
   color: var(--maroon);
-  background-color: var(--maroon-tint);
+  transform: translateX(3px);
 }
 
 /* --- Mobile navigation --- */
@@ -206,7 +174,6 @@
   width: 24px;
   height: 2px;
   background: var(--ink);
-  border-radius: 2px;
   transition: transform 0.25s ease, opacity 0.2s ease;
 }
 
@@ -224,17 +191,18 @@
 
 .mobileNav {
   position: fixed;
-  top: var(--nav-height);
+  top: var(--nav-compact-height);
   left: 0;
   right: 0;
   bottom: 0;
   background: var(--paper);
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   overflow-y: auto;
   overscroll-behavior: contain;
-  padding: 8vh 1.5rem 3rem;
+  /* Left-aligned to the page column, like the rest of the site. */
+  padding: 5vh clamp(24px, 5.75vw, 87px) 3rem;
   z-index: 99;
 }
 
@@ -242,21 +210,28 @@
   list-style-type: none;
   padding: 0;
   margin: 0;
-  text-align: center;
   width: 100%;
 }
 
 .mobileNavLink {
-  font-family: var(--serif);
-  color: var(--ink);
-  text-decoration: none;
-  font-weight: 500;
-  font-size: 1.5rem;
   display: block;
-  padding: 0.85rem 0;
+  padding: 0.7rem 0;
+  font-family: var(--sans);
+  font-size: 1.6rem;
+  font-weight: 400;
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 0.12em;
+  text-decoration-thickness: 1px;
 }
 
-.mobileNavLink:hover {
+/* "Programs" has no page of its own; it's a label for the links below it. */
+span.mobileNavLink {
+  text-decoration: none;
+  color: var(--muted);
+}
+
+a.mobileNavLink:hover {
   color: var(--maroon);
 }
 
@@ -268,66 +243,48 @@
 
 .mobileSubLink {
   display: block;
-  padding: 0.4rem 0;
+  padding: 0.35rem 0;
   font-family: var(--sans);
-  font-size: 0.95rem;
-  color: var(--muted);
-  text-decoration: none;
+  font-size: 1.15rem;
+  font-weight: var(--text-weight);
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 0.12em;
+  text-decoration-thickness: 1px;
 }
 
 .mobileSubLink:hover {
   color: var(--maroon);
 }
 
-.mobileCtaLink {
-  display: inline-block;
-  margin-top: 1.5rem;
-  font-family: var(--sans);
-  font-size: 1.05rem;
-  font-weight: 500;
-  color: var(--maroon);
-  text-decoration: none;
-  padding: 0.6rem 0;
-}
-
-.mobileToggleRow {
-  display: flex;
-  justify-content: center;
-  margin-top: 1.8rem;
-}
-
-.headerThemeToggle {
-  display: flex;
-  align-items: center;
-  flex-shrink: 0;
-}
-
 .desktopNav {
   margin-left: auto;
 }
 
+/* Figma: 78px XLab mark. */
 .headerHomeMark {
   display: flex;
   align-items: center;
-  justify-content: center;
-  width: 38px;
-  height: 38px;
   flex-shrink: 0;
 }
 
 .headerHomeMark img {
-  width: 32px;
-  height: 32px;
-  object-fit: contain;
+  width: clamp(40px, 5.16vw, 78px);
+  height: auto;
+  transition: width 0.3s ease;
 }
 
-@media screen and (min-width: 1001px) {
+.scrolled .headerHomeMark img {
+  width: 46px;
+}
+
+@media (min-width: 1001px) {
   .mobileNav {
     display: none;
   }
 }
 
-@media screen and (max-width: 1000px) {
+@media (max-width: 1000px) {
   .desktopNav {
     display: none;
   }
@@ -336,13 +293,4 @@
     display: flex;
   }
 
-  .logo {
-    width: 210px;
-    height: auto;
-  }
-
-  .logoText,
-  .logoName {
-    display: none;
-  }
 }

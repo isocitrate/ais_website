@@ -8,6 +8,21 @@
   display: block;
 }
 
+/* Full-bleed use (homepage hero, inner-page header bands): strongest at the top,
+   faint behind the logo, text and buttons so content sits on near-plain paper. */
+/* Fully gone by ~80% of the way down (the gradient-descent hero only accepts
+   clicks above that line too — see CLICK_LIMIT in GradientDescentBackground.js). */
+.fade {
+  mask-image: linear-gradient(to bottom, #000 0%, #000 25%, rgba(0, 0, 0, 0.3) 55%, rgba(0, 0, 0, 0.15) 70%, transparent 80%);
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 25%, rgba(0, 0, 0, 0.3) 55%, rgba(0, 0, 0, 0.15) 70%, transparent 80%);
+}
+
+/* Fade toward the left, where text sits (the maroon "Get involved" block). */
+.fadeLeft {
+  mask-image: linear-gradient(to left, #000 0%, #000 20%, rgba(0, 0, 0, 0.25) 55%, transparent 75%);
+  -webkit-mask-image: linear-gradient(to left, #000 0%, #000 20%, rgba(0, 0, 0, 0.25) 55%, transparent 75%);
+}
+
 .side {
   mask-image: linear-gradient(
     90deg,
@@ -35,4 +50,15 @@
     -webkit-mask-image: none;
     opacity: 0.35;
   }
+}
+
+/* Hero with the gradient-descent background: empty areas are clickable (drop a
+   ball), so show a crosshair there; links and buttons keep their own cursor. */
+.droppable {
+  cursor: crosshair;
+}
+
+/* Below the visible landscape: normal page, not clickable. */
+.droppable.outOfReach {
+  cursor: auto;
 }

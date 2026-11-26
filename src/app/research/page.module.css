@@ -1,141 +1,67 @@
-.pageWrap {
-  position: relative;
-  overflow: clip;
+/* Uses the shared inner-page design language (src/app/ui/layout.module.css). */
+
+.section {
+  composes: section from "../ui/layout.module.css";
 }
 
-.researchContainer {
-  max-width: 860px;
-  margin: 0 auto;
-  padding: 3.5rem var(--page-pad) 2rem;
+.sectionTitle {
+  composes: sectionTitle from "../ui/layout.module.css";
 }
 
-
-.pageHeader {
-  position: relative;
-  border-bottom: 1px solid var(--hairline-dark);
-  padding-bottom: 2rem;
-  margin-bottom: 2.5rem;
+.link {
+  composes: link from "../ui/layout.module.css";
 }
 
-.eyebrow {
-  font-family: var(--sans);
-  font-size: 0.72rem;
-  font-weight: 500;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--maroon);
-  margin: 0 0 0.9rem;
+.list {
+  composes: list from "../ui/layout.module.css";
 }
 
-.pageTitle {
-  font-family: var(--sans);
-  font-size: clamp(2.2rem, 4vw, 2.9rem);
-  font-weight: 500;
-  letter-spacing: -0.015em;
-  color: var(--ink);
-  margin: 0;
-}
-
-.intro {
-  font-family: var(--sans);
-  font-size: 1rem;
-  font-weight: var(--text-weight);
-  line-height: 1.75;
-  color: var(--muted);
-  max-width: 48rem;
-  margin: 0 0 2rem;
+/* Research areas are information, not actions, so no grey box: a plain
+   2-column grid like the homepage's "risks" section. */
+.areaGrid {
+  composes: infoGrid from "../ui/layout.module.css";
 }
 
 .areaCard {
-  border: 1px solid var(--hairline-dark);
-  border-radius: var(--radius);
-  padding: 1.6rem 1.8rem;
-  margin-bottom: 1rem;
-  background: var(--paper);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.areaCard:hover {
-  border-color: var(--maroon);
-  box-shadow: 0 8px 24px rgba(var(--ink-rgb), 0.05);
+  min-width: 0;
 }
 
 .areaTitle {
-  font-family: var(--sans);
-  font-size: 1.35rem;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  color: var(--ink);
-  margin: 0 0 0.6rem;
+  composes: cardTitle from "../ui/layout.module.css";
 }
 
 .areaDescription {
-  font-family: var(--sans);
-  font-size: 0.92rem;
-  font-weight: var(--text-weight);
-  line-height: 1.75;
-  color: var(--muted);
-  margin: 0;
+  composes: text from "../ui/layout.module.css";
 }
 
-.pageLede {
-  font-family: var(--sans);
-  font-size: 1rem;
-  font-weight: var(--text-weight);
-  line-height: 1.75;
-  color: var(--muted);
-  max-width: 44rem;
-  margin: 1.2rem 0 0;
-}
-
-.inlineLink {
-  color: var(--maroon);
-  text-decoration: none;
-  border-bottom: 1px solid rgba(var(--maroon-rgb), 0.35);
-  transition: border-color 0.2s ease, color 0.2s ease;
-}
-
-.inlineLink:hover {
-  color: var(--maroon-dark);
-  border-color: var(--maroon-dark);
-}
-
-.papersSection {
-  margin-top: 3.5rem;
-  margin-bottom: 3rem;
-}
-
+/* Papers: thumbnail + underlined title, four to a row. */
 .papersGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
-  gap: 1rem;
-  margin-top: 1.4rem;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(1.5rem, 2.6vw, 39px) clamp(1rem, 2.6vw, 39px);
 }
 
 .paperCard {
   display: flex;
   flex-direction: column;
-  border: 1px solid var(--hairline-dark);
-  border-radius: var(--radius);
-  overflow: hidden;
+  color: var(--ink);
   text-decoration: none;
-  background: var(--paper);
-  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.paperCard:hover {
-  border-color: var(--maroon);
-  transform: translateY(-2px);
-  box-shadow: 0 10px 28px rgba(var(--ink-rgb), 0.06);
 }
 
 .paperImageWrapper {
   position: relative;
-  width: 100%;
-  height: 150px;
-  background-color: var(--hairline);
-  border-bottom: 1px solid var(--hairline);
-  flex-shrink: 0;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: var(--hairline-dark);
+}
+
+.paperImage,
+.paperImageWrapper img {
+  transition: transform 0.35s ease;
+}
+
+.paperCard:hover .paperImageWrapper img {
+  transform: scale(1.04);
 }
 
 /* White paper scans flip to a dark reading mode with the theme. */
@@ -144,70 +70,33 @@
 }
 
 .paperTitle {
-  padding: 0.9rem 1rem 1rem;
+  margin-top: 0.7em;
   font-family: var(--sans);
-  font-size: 0.85rem;
-  font-weight: 400;
-  color: var(--ink);
-  line-height: 1.5;
-}
-
-.paperCardNoLink {
-  color: var(--faint);
-  cursor: default;
-}
-
-.paperCardNoLink:hover {
-  border-color: var(--hairline-dark);
-  box-shadow: none;
-  transform: none;
-}
-
-.otherSection {
-  margin-top: 3rem;
-}
-
-.otherTitle {
-  font-family: var(--sans);
-  font-size: 1.35rem;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  color: var(--ink);
-  margin: 0 0 1rem;
-}
-
-.otherList {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0 2.5rem;
-}
-
-.otherItem {
-  font-family: var(--sans);
-  font-size: 0.9rem;
+  font-size: clamp(1rem, 1.25vw, 1.1875rem);
   font-weight: var(--text-weight);
-  line-height: 1.6;
-  color: var(--muted);
-  padding: 0.55rem 0 0.55rem 1.4rem;
-  position: relative;
-  border-bottom: 1px solid var(--hairline);
+  line-height: 1.35;
+  text-decoration: underline;
+  text-underline-offset: 0.12em;
+  text-decoration-thickness: 1px;
+  transition: color 0.2s ease, text-decoration-thickness 0.2s ease;
 }
 
-.otherItem::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 1.3rem;
-  width: 12px;
-  height: 1px;
-  background: var(--maroon);
+.paperCard:hover .paperTitle {
+  color: var(--maroon);
 }
 
-@media (max-width: 640px) {
-  .otherList {
+@media (max-width: 1000px) {
+  .papersGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 800px) {
+  .areaGrid {
     grid-template-columns: 1fr;
+  }
+
+  .papersGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }

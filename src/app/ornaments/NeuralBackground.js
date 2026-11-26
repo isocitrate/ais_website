@@ -2,6 +2,8 @@
 import { useEffect, useRef } from "react";
 import styles from "./NeuralBackground.module.css";
 
+// Calm by design: no cursor reaction (it pulled lines right where people click),
+// slow drift, and only an occasional ambient pulse. Faded behind content via CSS.
 export default function NeuralBackground({ transparent = false, clearWidth = 860 }) {
   const canvasRef = useRef(null);
 
@@ -20,7 +22,7 @@ export default function NeuralBackground({ transparent = false, clearWidth = 860
     let last = 0;
     let resizeTimer = 0;
 
-    const mouse = { x: 0, y: 0, sx: 0, sy: 0, active: false, strength: 0 };
+    let nextAmbient = 1500;
 
     function rgba(color, alpha) {
       return `rgba(${color.join(",")},${alpha})`;
@@ -201,28 +203,21 @@ export default function NeuralBackground({ transparent = false, clearWidth = 860
       raf = window.requestAnimationFrame(frame);
       const dt = Math.min(50, now - (last || now));
       last = now;
-      const easing = 1 - Math.exp(-dt / 70);
-      mouse.sx += (mouse.x - mouse.sx) * easing;
-      mouse.sy += (mouse.y - mouse.sy) * easing;
-      mouse.strength += ((mouse.active ? 1 : 0) - mouse.strength) * (1 - Math.exp(-dt / 250));
+      // Occasional ambient pulse from a random node (every ~3–5 s).
+      nextAmbient -= dt;
+      if (!transparent && nextAmbient <= 0 && nodes.length) {
+        const node = nodes[Math.floor(Math.random() * nodes.length)];
+        if (node.out.length) fire(node, 0.6);
+        nextAmbient = 3000 + Math.random() * 2000;
+      }
 
       for (const node of nodes) {
-        const dx = mouse.sx - node.bx;
-        const dy = mouse.sy - node.by;
-        const distanceSquared = dx * dx + dy * dy;
-        let proximity = 0;
-        if (distanceSquared < 170 * 170 && mouse.strength > 0.001) {
-          proximity = 1 - Math.sqrt(distanceSquared) / 170;
-          proximity = proximity * proximity * (3 - 2 * proximity) * mouse.strength;
-        }
-        node.prox = proximity;
-        const driftX = reducedMotion ? 0 : Math.sin(now * 0.0005 * node.speed + node.phase) * 5;
-        const driftY = reducedMotion ? 0 : Math.cos(now * 0.0004 * node.speed + node.phase * 1.3) * 5;
-        node.x = node.bx + driftX + dx * proximity * 0.18;
-        node.y = node.by + driftY + dy * proximity * 0.18;
-        node.act = Math.max(node.act * Math.exp(-dt / 450), proximity);
+        node.prox = 0;
+        // Slow, small drift.
+        node.x = node.bx + Math.sin(now * 0.00025 * node.speed + node.phase) * 3;
+        node.y = node.by + Math.cos(now * 0.0002 * node.speed + node.phase * 1.3) * 3;
+        node.act *= Math.exp(-dt / 450);
         node.cool -= dt;
-        if (!transparent && !reducedMotion && node.cool <= 0 && node.out.length && node.act > 0.55) fire(node, node.act);
       }
 
       for (let i = pulses.length - 1; i >= 0; i--) {
@@ -241,27 +236,6 @@ export default function NeuralBackground({ transparent = false, clearWidth = 860
       draw();
     }
 
-    function onMove(event) {
-      const rect = canvas.getBoundingClientRect();
-      const x = event.clientX - rect.left;
-      const y = event.clientY - rect.top;
-      const inside = x >= 0 && y >= 0 && x <= rect.width && y <= rect.height;
-
-      mouse.active = inside;
-      if (!inside) return;
-
-      mouse.x = x;
-      mouse.y = y;
-      if (mouse.strength < 0.05) {
-        mouse.sx = x;
-        mouse.sy = y;
-      }
-    }
-
-    function onLeave() {
-      mouse.active = false;
-    }
-
     function onResize() {
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(build, 150);
@@ -274,8 +248,6 @@ export default function NeuralBackground({ transparent = false, clearWidth = 860
       raf = window.requestAnimationFrame(frame);
     }
 
-    window.addEventListener("pointermove", onMove, { passive: true });
-    document.documentElement.addEventListener("pointerleave", onLeave);
     const resizeObserver = new ResizeObserver(onResize);
     resizeObserver.observe(canvas.parentElement);
 
@@ -288,8 +260,6 @@ export default function NeuralBackground({ transparent = false, clearWidth = 860
     return () => {
       window.cancelAnimationFrame(raf);
       clearTimeout(resizeTimer);
-      window.removeEventListener("pointermove", onMove);
-      document.documentElement.removeEventListener("pointerleave", onLeave);
       resizeObserver.disconnect();
       themeObserver.disconnect();
     };
@@ -298,7 +268,7 @@ export default function NeuralBackground({ transparent = false, clearWidth = 860
   return (
     <canvas
       ref={canvasRef}
-      className={`${styles.canvas} ${transparent ? styles.side : ""}`}
+      className={`${styles.canvas} ${transparent ? styles.side : styles.fade}`}
       style={{ "--page-clear": `${clearWidth}px` }}
       aria-hidden="true"
     />

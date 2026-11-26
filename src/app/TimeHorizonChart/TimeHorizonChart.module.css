@@ -1,0 +1,186 @@
+/* Task-length chart. One accent colour (the design's #900000, lighter maroon in
+   dark mode); everything else is ink/grey so the trend is what you see first. */
+
+.figure {
+  --chart: #900000;
+  margin: clamp(1.75rem, 3vw, 2.75rem) 0 0;
+}
+
+:global(:root[data-theme="dark"]) .figure {
+  --chart: var(--maroon);
+}
+
+.title {
+  margin: 0 0 clamp(0.5rem, 1vw, 0.9rem);
+  font-family: var(--sans);
+  font-size: clamp(1.05rem, 1.6vw, 1.5rem);
+  font-weight: 400;
+  line-height: 1.2;
+  color: var(--ink);
+}
+
+.svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  font-family: var(--sans);
+  font-size: var(--font);
+}
+
+/* Wide layout by default; the taller phone layout under 700px. */
+.svg:global(.th-narrow) {
+  display: none;
+}
+
+@media (max-width: 700px) {
+  .svg:global(.th-wide) {
+    display: none;
+  }
+
+  .svg:global(.th-narrow) {
+    display: block;
+  }
+}
+
+.grid {
+  stroke: var(--hairline-dark);
+  stroke-width: 1;
+}
+
+.axis {
+  stroke: var(--ink);
+  stroke-width: 1.5;
+}
+
+.tick {
+  fill: var(--muted);
+  font-weight: var(--text-weight);
+}
+
+.example {
+  fill: var(--muted);
+  font-size: 0.85em;
+  font-style: italic;
+  font-weight: var(--text-weight);
+}
+
+.threshold {
+  fill: var(--ink);
+  opacity: 0.06;
+}
+
+.thresholdLabel {
+  fill: var(--ink);
+  font-weight: 400;
+}
+
+.thresholdSub {
+  fill: var(--muted);
+  font-size: 0.85em;
+  font-weight: var(--text-weight);
+}
+
+.trend {
+  fill: none;
+  stroke: var(--chart);
+  stroke-width: 3;
+}
+
+.projectionLabel {
+  fill: var(--chart);
+  font-size: 0.9em;
+  font-style: italic;
+}
+
+.enters {
+  stroke: var(--chart);
+  stroke-width: 5;
+  stroke-linecap: round;
+}
+
+.entersLabel {
+  fill: var(--chart);
+  font-weight: 500;
+  paint-order: stroke;
+  stroke: var(--paper);
+  stroke-width: 5px;
+  stroke-linejoin: round;
+}
+
+.today {
+  stroke: var(--muted);
+  stroke-width: 1;
+  stroke-dasharray: 4 4;
+}
+
+.todayLabel {
+  fill: var(--muted);
+  font-style: italic;
+}
+
+.dot {
+  fill: var(--chart);
+  transition: r 0.2s ease;
+}
+
+/* Newest measurement: the site's "now" mark (ring pulsing outward). */
+.nowRing {
+  fill: var(--chart);
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: chartNow 2s ease-out infinite;
+  pointer-events: none;
+}
+
+@keyframes chartNow {
+  from {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+  to {
+    transform: scale(2.8);
+    opacity: 0;
+  }
+}
+
+.pointLabel {
+  fill: var(--ink);
+  font-weight: var(--text-weight);
+  paint-order: stroke;
+  stroke: var(--paper);
+  stroke-width: 5px;
+  stroke-linejoin: round;
+}
+
+/* Hover / focus a point to see its model and value (native tooltip). */
+.point {
+  outline: none;
+}
+
+.point:hover circle,
+.point:focus circle {
+  r: calc(var(--font) * 0.5);
+}
+
+.caption {
+  margin-top: clamp(0.6rem, 1.2vw, 1rem);
+  max-width: 60em;
+  font-family: var(--sans);
+  font-size: clamp(0.9rem, 1.05vw, 1rem);
+  font-weight: var(--text-weight);
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+.caption a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 0.12em;
+  text-decoration-thickness: 1px;
+  transition: color 0.2s ease, text-decoration-thickness 0.2s ease;
+}
+
+.caption a:hover {
+  color: var(--maroon);
+}

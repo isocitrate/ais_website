@@ -1,3 +1,6 @@
+/* Footer, in the shared design language (src/app/ui/layout.module.css):
+   ink underlined links, meta-sized labels in --muted, no uppercase eyebrows. */
+
 .footer {
   background-color: var(--paper);
   border-top: 1px solid var(--hairline-dark);
@@ -5,10 +8,12 @@
   font-family: var(--sans);
 }
 
+/* Same column as the header and homepage. */
 .container {
-  max-width: 1280px;
+  max-width: 1512px;
   margin: 0 auto;
-  padding: 3.5rem var(--page-pad) 2rem;
+  padding: 3.5rem clamp(24px, 5.75vw, 87px) 2rem;
+  box-sizing: border-box;
 }
 
 .main {
@@ -28,46 +33,10 @@
 .brandGroup {
   display: flex;
   align-items: center;
-  gap: 0.7rem;
-}
-
-.brandText {
-  display: flex;
-  flex-direction: column;
-  font-family: var(--serif);
-  color: var(--maroon);
-  font-weight: 600;
-  font-size: 1.05rem;
-  line-height: 1.15;
-}
-
-.brandName {
-  color: var(--ink);
 }
 
 .location {
-  color: var(--faint);
-  font-size: 0.85rem;
-  font-weight: var(--text-weight);
-  margin: 0;
-}
-
-.xlabLink {
-  display: inline-block;
-  /* The wordmark image has ~12px of built-in left whitespace; pull it flush with the text. */
-  margin-left: -12px;
-  line-height: 0;
-  opacity: 0.85;
-  transition: opacity 0.2s ease;
-}
-
-.xlabLink:hover {
-  opacity: 1;
-}
-
-.xlabLogo {
-  height: auto;
-  max-width: 100%;
+  composes: meta from "../ui/layout.module.css";
 }
 
 .columns {
@@ -78,46 +47,46 @@
 .column {
   display: flex;
   flex-direction: column;
-  gap: 0.7rem;
-  font-size: 0.875rem;
+  align-items: flex-start;
+  gap: 0.55rem;
+  font-size: clamp(1rem, 1.25vw, 1.1875rem);
+  font-weight: var(--text-weight);
 }
 
 .columnTitle {
-  color: var(--faint);
-  font-size: 0.7rem;
-  font-weight: 500;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  margin: 0 0 0.3rem;
+  composes: meta from "../ui/layout.module.css";
+  margin-bottom: 0.2rem;
 }
 
 .column a {
-  color: var(--muted);
-  text-decoration: none;
-  transition: color 0.2s ease;
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 0.12em;
+  text-decoration-thickness: 1px;
+  transition: color 0.2s ease, text-decoration-thickness 0.2s ease;
 }
 
 .column a:hover {
   color: var(--maroon);
 }
 
-.columnCta {
-  color: var(--maroon) !important;
-  font-weight: 500;
-}
-
 .bottomBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
   border-top: 1px solid var(--hairline);
   margin-top: 3rem;
   padding-top: 1.5rem;
 }
 
-.bottomBar p {
-  color: var(--faint);
-  font-size: 0.78rem;
-  font-weight: var(--text-weight);
-  line-height: 1.7;
-  margin: 0;
+.copyright {
+  composes: meta from "../ui/layout.module.css";
+}
+
+.themeToggle {
+  display: flex;
+  flex-shrink: 0;
 }
 
 .footerLockupLight,

@@ -1,0 +1,119 @@
+/* Uses the shared inner-page design language (src/app/ui/layout.module.css). */
+
+.section {
+  composes: section from "../ui/layout.module.css";
+}
+
+.sectionTitle {
+  composes: sectionTitle from "../ui/layout.module.css";
+}
+
+.text {
+  composes: text from "../ui/layout.module.css";
+}
+
+.link {
+  composes: link from "../ui/layout.module.css";
+}
+
+.list {
+  composes: list from "../ui/layout.module.css";
+  margin-top: 0.4em;
+}
+
+/* Key facts: label / value rows. */
+.facts {
+  max-width: 42em;
+  margin: clamp(1.25rem, 2vw, 1.75rem) 0 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--hairline-dark);
+  font-family: var(--sans);
+  font-size: clamp(1.05rem, 1.39vw, 1.3125rem);
+  font-weight: var(--text-weight);
+  line-height: 1.45;
+  color: var(--ink);
+}
+
+.facts li {
+  display: grid;
+  grid-template-columns: 13em 1fr;
+  gap: 1rem;
+  padding: 0.7em 0;
+  border-bottom: 1px solid var(--hairline-dark);
+}
+
+.factLabel {
+  color: var(--muted);
+}
+
+/* Each group: description on the left, details on the right (like the syllabi). */
+.groups {
+  display: flex;
+  flex-direction: column;
+}
+
+.group {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  gap: clamp(1.25rem, 2vw, 2rem) clamp(2rem, 5.4vw, 5rem);
+  padding: clamp(2rem, 3.5vw, 3rem) 0;
+  border-top: 1px solid var(--hairline-dark);
+}
+
+.group:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.groupIntro,
+.groupDetails {
+  min-width: 0;
+}
+
+.groupName {
+  composes: subTitle from "../ui/layout.module.css";
+  margin-bottom: 0.6em;
+  font-size: clamp(1.4rem, 2.1vw, 2rem);
+}
+
+.groupIntro .text + .text {
+  margin-top: 0.9em;
+}
+
+.listTitle {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: clamp(1rem, 1.25vw, 1.1875rem);
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.list + .listTitle {
+  margin-top: 1.4em;
+}
+
+.docLink {
+  composes: link from "../ui/layout.module.css";
+  display: inline-block;
+  margin-top: clamp(0.5rem, 1vw, 1rem);
+  font-family: var(--sans);
+  font-size: clamp(1.05rem, 1.5vw, 1.375rem);
+}
+
+/* Maroon = take part. */
+.button {
+  composes: buttonPrimary from "../ui/layout.module.css";
+  margin-top: clamp(1.1rem, 1.8vw, 1.6rem);
+}
+
+@media (max-width: 800px) {
+  .group {
+    grid-template-columns: 1fr;
+  }
+
+  .facts li {
+    grid-template-columns: 1fr;
+    gap: 0.1rem;
+  }
+}

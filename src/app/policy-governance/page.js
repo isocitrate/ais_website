@@ -1,9 +1,9 @@
 import React from "react";
-import styles from "./page.module.css";
-import NeuralBackground from "@/app/ornaments/NeuralBackground";
+import styles from "@/app/ui/syllabus.module.css";
+import PageLayout from "@/app/ui/PageLayout";
 
 export const metadata = {
-  title: "Policy and Governance - AI Safety Group @ UChicago XLab",
+  title: "AI Policy - AI Safety Group @ UChicago XLab",
   description:
     "A fellowship covering the foundations of AI policy: key players and policy levers, current US, state, lab, and EU frameworks, pressing topics from US–China competition to CBRN risk, and careers in AI policy.",
   keywords:
@@ -656,28 +656,28 @@ const sessions = [
 
 export default function PolicyGovernance() {
   return (
-    <div className={styles.pageWrap}>
-      <NeuralBackground transparent clearWidth={860} />
-      <div className={styles.fellowshipContainer}>
-        <header className={styles.pageHeader}>
-          
-          <h1 className={styles.pageTitle}>Policy and Governance</h1>
-          <p className={styles.pageLede}>
-            This track builds a working map of AI policy: the key players and institutions, the
-            functions of government that shape AI, and the policy levers available. Fellows survey
-            the frameworks in place today, explore pressing topics and issues, as well as proposed
-            responses to address them. Fellows conclude the program by drafting and defending their
-            own policy briefs. No prior policy experience is required — we welcome students from
-            technical backgrounds looking to build policy literacy, as well as those in the social
-            sciences and humanities engaging with AI-specific governance challenges.
-          </p>
-        </header>
-        <div className={styles.weeklyReadings}>
-          {sessions.map((session, index) => (
-            <section key={index} className={styles.weekSection}>
+    <PageLayout
+      title="AI Policy"
+      lede={
+        <p>
+          This track builds a working map of AI policy: the key players and institutions, the
+          functions of government that shape AI, and the policy levers available. Fellows survey the
+          frameworks in place today, explore pressing topics and issues, as well as proposed
+          responses to address them. Fellows conclude the program by drafting and defending their
+          own policy briefs. No prior policy experience is required — we welcome students from
+          technical backgrounds looking to build policy literacy, as well as those in the social
+          sciences and humanities engaging with AI-specific governance challenges.
+        </p>
+      }>
+      <div className={styles.weeklyReadings}>
+        {sessions.map((session, index) => (
+          <section key={index} className={styles.weekSection}>
+            <div className={styles.weekIntro}>
               <p className={styles.weekNum}>Session {String(session.session).padStart(2, "0")}</p>
               <h2 className={styles.weekTitle}>{session.title}</h2>
               <p className={styles.weekDescription}>{session.description}</p>
+            </div>
+            <div className={styles.weekBody}>
               {session.groups.map((group, groupIndex) => (
                 <React.Fragment key={groupIndex}>
                   {group.title && <h3 className={styles.groupTitle}>{group.title}</h3>}
@@ -703,10 +703,10 @@ export default function PolicyGovernance() {
                   </ul>
                 </React.Fragment>
               ))}
-            </section>
-          ))}
-        </div>
+            </div>
+          </section>
+        ))}
       </div>
-    </div>
+    </PageLayout>
   );
 }

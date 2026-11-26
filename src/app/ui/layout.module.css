@@ -1,0 +1,299 @@
+/*
+  Shared design language for inner pages, taken from the homepage (Figma
+  "ais_homepage", designed at 1512px wide):
+  - the homepage's wide column (87px side margins at full width);
+  - a header band with the network background behind the floating menu;
+  - 64px semibold Garamond page titles only; all other headings in sans;
+  - long text at a comfortable ~21px with a capped line length;
+  - ink links with an underline, maroon on hover;
+  - solid grey / maroon buttons and flat grey boxes (no borders, no radius).
+  Page stylesheets reuse these with `composes:`.
+
+  What each element MEANS (keep these consistent):
+  - Underlined text = clickable. Hover turns it maroon.
+  - ↗ after a link = it opens another site. Automatic for target="_blank"
+    links (globals.css); internal links never get one.
+  - Grey box = a featured item you can act on (view syllabus, apply, open).
+    If the box has one destination, the whole box is clickable. Information
+    that isn't actionable (research areas, lists of people) uses a plain grid
+    (.infoGrid) or a thin top rule instead — never a box.
+  - Maroon button = take part (apply, join, sign up). Grey button = go and
+    learn more. A button must perform its action; if it can't (e.g.
+    applications closed), show plain status text instead.
+  - Bold menu item = the page you're on.
+*/
+
+.container {
+  max-width: 1512px;
+  margin: 0 auto;
+  padding-inline: clamp(24px, 5.75vw, 87px);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* --- Header band --- */
+
+.band {
+  position: relative;
+  overflow: hidden;
+  /* Runs up under the floating menu, like the homepage hero. */
+  margin-top: calc(-1 * var(--nav-height));
+  padding: calc(var(--nav-height) + clamp(2.5rem, 5vw, 5rem)) 0 clamp(3rem, 5vw, 5rem);
+}
+
+/* The background fades itself out (mask in NeuralBackground.module.css). */
+
+/* Hero-height band: text sits low, leaving the open top-right for the ball
+   (same geometry as the homepage hero, so the ball stays clear of the menu). */
+.bandTall {
+  display: flex;
+  align-items: flex-end;
+  min-height: clamp(560px, calc(100svh - 150px), 900px);
+  box-sizing: border-box;
+}
+
+.bandTall .bandInner {
+  width: 100%;
+}
+
+.bandInner {
+  position: relative;
+  z-index: 1;
+}
+
+.title {
+  max-width: 14em;
+  margin: 0;
+  font-family: var(--serif);
+  font-size: clamp(2.4rem, 4.23vw, 4rem);
+  font-weight: 600;
+  line-height: 1;
+  color: var(--ink);
+}
+
+.lede {
+  max-width: 32em;
+  margin-top: clamp(1rem, 2vw, 1.75rem);
+  font-size: clamp(1.15rem, 1.85vw, 1.75rem);
+  font-weight: var(--text-weight);
+  line-height: 1.25;
+  color: var(--ink);
+}
+
+.lede p {
+  margin: 0;
+}
+
+.lede p + p {
+  margin-top: 0.75em;
+}
+
+.lede a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 0.12em;
+  text-decoration-thickness: 1px;
+  transition: color 0.2s ease, text-decoration-thickness 0.2s ease;
+}
+
+.lede a:hover {
+  color: var(--maroon);
+}
+
+/* --- Content --- */
+
+.content {
+  padding-bottom: clamp(2rem, 4vw, 4rem);
+}
+
+.section + .section {
+  margin-top: clamp(3rem, 5.3vw, 5rem);
+}
+
+/* Section headings within a page: sans (Garamond is only for page titles). */
+.sectionTitle {
+  max-width: 22em;
+  margin: 0 0 clamp(0.9rem, 1.6vw, 1.5rem);
+  font-family: var(--sans);
+  font-size: clamp(1.6rem, 2.6vw, 2.5rem);
+  font-weight: 400;
+  line-height: 1.12;
+  color: var(--ink);
+}
+
+.subTitle {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: clamp(1.25rem, 1.85vw, 1.75rem);
+  font-weight: 400;
+  line-height: 1.2;
+  color: var(--ink);
+}
+
+/* Title inside a grey box (fellowship, research area, team). */
+.cardTitle {
+  margin: 0 0 0.6em;
+  font-family: var(--sans);
+  font-size: clamp(1.5rem, 2.38vw, 2.25rem);
+  font-weight: 400;
+  line-height: 1.15;
+  color: var(--ink);
+}
+
+.text {
+  max-width: 42em;
+  margin: 0;
+  font-family: var(--sans);
+  font-size: clamp(1.05rem, 1.39vw, 1.3125rem);
+  font-weight: var(--text-weight);
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+.text + .text {
+  margin-top: 0.9em;
+}
+
+.meta {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: clamp(0.95rem, 1.12vw, 1.0625rem);
+  font-weight: var(--text-weight);
+  line-height: 1.4;
+  color: var(--muted);
+}
+
+.link {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 0.12em;
+  text-decoration-thickness: 1px;
+  transition: color 0.2s ease, text-decoration-thickness 0.2s ease;
+}
+
+.link:hover {
+  color: var(--maroon);
+}
+
+/* Short-dash list, in ink. */
+.list {
+  max-width: 42em;
+  margin: 0.9em 0 0;
+  padding: 0;
+  list-style: none;
+  font-family: var(--sans);
+  font-size: clamp(1.05rem, 1.39vw, 1.3125rem);
+  font-weight: var(--text-weight);
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+.list li {
+  position: relative;
+  padding-left: 1.4em;
+}
+
+.list li + li {
+  margin-top: 0.35em;
+}
+
+.list li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.78em;
+  width: 0.7em;
+  border-top: 1px solid currentColor;
+}
+
+/* --- Buttons and boxes (as in the homepage hero and program cards) --- */
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  min-width: 12em;
+  height: 2.3em;
+  padding: 0 0.7em;
+  border: 0;
+  font-family: var(--sans);
+  font-size: clamp(1.05rem, 1.5vw, 1.375rem);
+  font-weight: 400;
+  text-decoration: underline;
+  text-underline-offset: 0.12em;
+  text-decoration-thickness: 1px;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: transform 0.2s ease, filter 0.2s ease, text-decoration-thickness 0.2s ease;
+}
+
+/* Buttons rise a little and darken on hover, and press back down on click. */
+.button:hover {
+  transform: translateY(-2px);
+  filter: brightness(0.9);
+  text-decoration-thickness: 2px;
+}
+
+.button:active {
+  transform: translateY(0);
+  filter: brightness(0.82);
+}
+
+.buttonPrimary {
+  composes: button;
+  background: #900000;
+  color: #fff;
+}
+
+.buttonSecondary {
+  composes: button;
+  background: var(--hairline-dark);
+  color: var(--ink);
+}
+
+/* Plain grid for information items (no box = nothing to act on). */
+.infoGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(2rem, 3.5vw, 3.25rem) clamp(2rem, 5.4vw, 5rem);
+}
+
+@media (max-width: 800px) {
+  .infoGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Grey box = a featured item you can act on (open, apply, view syllabus). */
+.box {
+  background: var(--hairline-dark);
+  padding: clamp(1.25rem, 2.2vw, 2.25rem);
+  box-sizing: border-box;
+}
+
+/* Clickable box: lifts slightly and darkens on hover. Put a stretched link
+   inside (see .stretchedLink) so the whole box is the hit area. */
+.boxInteractive {
+  composes: box;
+  position: relative;
+  transition: transform 0.25s ease, background-color 0.25s ease;
+}
+
+.boxInteractive:hover,
+.boxInteractive:focus-within {
+  transform: translateY(-4px);
+  background: color-mix(in srgb, var(--hairline-dark), var(--ink) 7%);
+}
+
+/* A link whose click area covers its whole .boxInteractive parent.
+   (::before, because ::after carries the ↗ on external links.) */
+.stretchedLink::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+/* Other links/buttons in the box stay clickable above the stretched link. */
+.boxAction {
+  position: relative;
+  z-index: 1;
+}

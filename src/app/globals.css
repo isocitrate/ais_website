@@ -12,13 +12,12 @@
   --hairline-dark: #ddd8cf;
   --maroon: #8b1724;
   --maroon-rgb: 139, 23, 36;
-  --maroon-dark: #6d111c;
-  --maroon-tint: rgba(139, 23, 36, 0.05);
 
   /* Layout */
-  --nav-height: 76px;
-  --page-pad: clamp(24px, 6vw, 64px);
-  --radius: 3px;
+  /* Figma header: 78px mark with ~52px above and below at 1512px wide. */
+  --nav-height: clamp(76px, 12vw, 182px);
+  /* Shorter bar shown after scrolling. */
+  --nav-compact-height: 72px;
 
   /* Type */
   --serif: var(--font-serif), "EB Garamond", Georgia, "Times New Roman", serif;
@@ -41,8 +40,6 @@
   --hairline-dark: #363028;
   --maroon: #d06a63;
   --maroon-rgb: 208, 106, 99;
-  --maroon-dark: #e08a84;
-  --maroon-tint: rgba(208, 106, 99, 0.09);
 
   --text-weight: 400;
 }
@@ -87,7 +84,9 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: var(--serif);
+  /* Garamond is reserved for top-level headings (page titles and the homepage's
+     section headings), which set it explicitly; everything else is sans. */
+  font-family: var(--sans);
   text-wrap: balance;
 }
 
@@ -112,4 +111,83 @@ figcaption {
 
 body.menu-open {
   overflow: hidden;
+}
+
+/*
+  Link conventions, site-wide:
+  - clickable text is underlined and turns maroon on hover;
+  - a link that opens another site (target="_blank") gets a ↗ after it, drawn
+    in the link's own colour (so it follows hover colour and white-on-maroon).
+    Add data-arrow="none" to opt out (e.g. image cards that place it themselves).
+*/
+a[target="_blank"]:not([data-arrow="none"])::after,
+.externalArrow::after {
+  content: "";
+  display: inline-block;
+  width: 0.72em;
+  height: 0.72em;
+  margin-left: 0.3em;
+  vertical-align: -0.02em;
+  background-color: currentColor;
+  -webkit-mask: url("/home/arrow-ink.svg") center / contain no-repeat;
+  mask: url("/home/arrow-ink.svg") center / contain no-repeat;
+  transition: transform 0.2s ease;
+}
+
+a[target="_blank"]:not([data-arrow="none"]):hover::after,
+a:hover .externalArrow::after {
+  transform: translate(3px, -3px);
+}
+
+/* Hover feedback for text links: maroon (set per component) plus a slightly
+   heavier underline. Also covers links whose underline sits on an inner span. */
+a:hover,
+a:hover > span {
+  text-decoration-thickness: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+
+/*
+  "Now / here" mark: a dot with a ring pulsing outward (the contour rings, in
+  motion). Used sparingly for the current state only: the hero notice, the
+  upcoming event, the newest measurement on the task chart. (Reduced-motion
+  users get a steady dot via the rule above.)
+*/
+.nowMark {
+  position: relative;
+  display: inline-block;
+  width: 0.5em;
+  height: 0.5em;
+  margin-right: 0.5em;
+  border-radius: 50%;
+  background: var(--maroon);
+  vertical-align: 0.05em;
+}
+
+.nowMark::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--maroon);
+  animation: nowPulse 2s ease-out infinite;
+}
+
+@keyframes nowPulse {
+  from {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+  to {
+    transform: scale(2.8);
+    opacity: 0;
+  }
 }

@@ -1,7 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import styles from "./page.module.css";
-import NeuralBackground from "@/app/ornaments/NeuralBackground";
+import PageLayout from "@/app/ui/PageLayout";
 
 export const metadata = {
   title: "Research - AI Safety Group @ UChicago XLab",
@@ -69,75 +69,80 @@ const otherAreas = [
   "Model organisms, red-teaming, and deceptive alignment",
 ];
 
+const areas = [
+  {
+    title: "Technical AI safety",
+    description: (
+      <>
+        Understanding the empirical properties of existing frontier AI systems and developing
+        theory about the properties we can expect from future systems — how they are shaped by
+        different forms of training, the mechanisms behind their behavior, and how human oversight
+        can scale to increasingly advanced AI.
+      </>
+    ),
+  },
+  {
+    title: "Security",
+    description: (
+      <>
+        Studying the attack surface of advanced AI systems — including model weights, training
+        pipelines, deployment infrastructure, and the information-security posture of frontier
+        labs. Check out our{" "}
+        <a href="https://xlabaisecurity.com/" target="_blank" rel="noopener noreferrer" className={styles.link}>
+          Security Guide
+        </a>
+        .
+      </>
+    ),
+  },
+  {
+    title: "Strategy and forecasting",
+    description: (
+      <>
+        Mapping AI development trajectories, identifying the highest-leverage interventions, and
+        analyzing how transformative AI will reshape institutions, economies, and global risk.
+      </>
+    ),
+  },
+  {
+    title: "Policy and governance",
+    description: (
+      <>
+        Examining regulatory frameworks, compliance and verification mechanisms, compute
+        governance, and the international coordination challenges posed by frontier AI development.
+      </>
+    ),
+  },
+];
+
 export default function Research() {
   return (
-    <div className={styles.pageWrap}>
-      <NeuralBackground transparent clearWidth={860} />
-      <div className={styles.researchContainer}>
-      <header className={styles.pageHeader}>
-        <h1 className={styles.pageTitle}>Research</h1>
-        <p className={styles.pageLede}>
-          Applications for research working groups are currently closed and expected to open in early January for Winter 2027. Join our 
-          {" "}
-          <a
-            href="https://lists.uchicago.edu/web/info/aisafety"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.inlineLink}>
+    <PageLayout
+      title="Research"
+      lede={
+        <p>
+          Applications for research working groups are currently closed and expected to open in
+          early January for Winter 2027. Join our{" "}
+          <a href="https://lists.uchicago.edu/web/info/aisafety" target="_blank" rel="noopener noreferrer">
             mailing list
-          </a> to be notified when applications open. 
+          </a>{" "}
+          to be notified when applications open.
         </p>
-      </header>
+      }>
+      <section className={styles.section}>
+        <h2 className={styles.sectionTitle}>Our work spans the technical, strategic, and governance aspects of AI safety</h2>
+        <div className={styles.areaGrid}>
+          {areas.map((area) => (
+            <div key={area.title} className={styles.areaCard}>
+              <h3 className={styles.areaTitle}>{area.title}</h3>
+              <p className={styles.areaDescription}>{area.description}</p>
+            </div>
+          ))}
+        </div>
+      </section>
 
-      <p className={styles.intro}>
-        Our work spans the technical, strategic, and governance aspects of AI safety. 
-      </p>
-
-      <div className={styles.areaCard}>
-        <h2 className={styles.areaTitle}>Technical AI Safety</h2>
-        <p className={styles.areaDescription}>
-          Understanding the empirical properties of existing frontier AI systems and
-          developing theory about the properties we can expect from future systems — how they are
-          shaped by different forms of training, the mechanisms behind their behavior, and how human
-          oversight can scale to increasingly advanced AI.
-        </p>
-      </div>
-
-      <div className={styles.areaCard}>
-        <h2 className={styles.areaTitle}>Security</h2>
-        <p className={styles.areaDescription}>
-          Studying the attack surface of advanced AI systems — including model weights, training
-          pipelines, deployment infrastructure, and the information-security posture of frontier
-          labs. Check out our{" "}
-          <a
-            href="https://xlabaisecurity.com/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.inlineLink}>
-            Security Guide
-          </a>
-          .
-        </p>
-      </div>
-
-      <div className={styles.areaCard}>
-        <h2 className={styles.areaTitle}>Strategy &amp; Forecasting</h2>
-        <p className={styles.areaDescription}>
-          Mapping AI development trajectories, identifying the highest-leverage interventions, and
-          analyzing how transformative AI will reshape institutions, economies, and global risk.
-        </p>
-      </div>
-
-      <div className={styles.areaCard}>
-        <h2 className={styles.areaTitle}>Policy &amp; Governance</h2>
-        <p className={styles.areaDescription}>
-          Examining regulatory frameworks, compliance and verification mechanisms, compute
-          governance, and the international coordination challenges posed by frontier AI development.
-        </p>
-      </div>
-
-      <section className={styles.papersSection}>
-        <h2 className={styles.otherTitle}>Publications &amp; Working Papers</h2>
+      <section className={styles.section}>
+        <h2 className={styles.sectionTitle}>Publications and working papers</h2>
         <div className={styles.papersGrid}>
           {papers.map((paper) => (
             <a
@@ -145,35 +150,34 @@ export default function Research() {
               href={paper.href}
               target="_blank"
               rel="noopener noreferrer"
+              data-arrow="none"
               className={styles.paperCard}>
               {paper.image && (
                 <div className={styles.paperImageWrapper}>
                   <Image
                     src={paper.image}
-                    alt={paper.title}
+                    alt=""
                     fill
+                    sizes="(max-width: 700px) 50vw, 25vw"
                     className={paper.keepColors ? undefined : styles.paperImage}
                     style={{ objectFit: "cover", objectPosition: "top" }}
                   />
                 </div>
               )}
-              <span className={styles.paperTitle}>{paper.title}</span>
+              <span className={`${styles.paperTitle} externalArrow`}>{paper.title}</span>
             </a>
           ))}
         </div>
       </section>
 
-      <section className={styles.otherSection} hidden>
-        <h2 className={styles.otherTitle}>Other areas we actively engage with include:</h2>
-        <ul className={styles.otherList}>
+      <section className={styles.section} hidden>
+        <h2 className={styles.sectionTitle}>Other areas we actively engage with include:</h2>
+        <ul className={styles.list}>
           {otherAreas.map((area) => (
-            <li key={area} className={styles.otherItem}>
-              {area}
-            </li>
+            <li key={area}>{area}</li>
           ))}
         </ul>
       </section>
-      </div>
-    </div>
+    </PageLayout>
   );
 }

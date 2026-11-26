@@ -1,6 +1,6 @@
 import React from "react";
-import styles from "./page.module.css";
-import NeuralBackground from "@/app/ornaments/NeuralBackground";
+import styles from "@/app/ui/syllabus.module.css";
+import PageLayout from "@/app/ui/PageLayout";
 
 export const metadata = {
   title: "Strategy and Forecasting - AI Safety Group @ UChicago XLab",
@@ -189,13 +189,10 @@ const weeklyContent = [
 
 export default function StrategyGroup() {
   return (
-    <div className={styles.pageWrap}>
-      <NeuralBackground transparent clearWidth={860} />
-      <div className={styles.strategyContainer}>
-      <header className={styles.pageHeader}>
-        
-        <h1 className={styles.pageTitle}>Strategy and Forecasting</h1>
-        <p className={styles.pageLede}>
+    <PageLayout
+      title="Strategy and Forecasting"
+      lede={
+        <p>
           As frontier models grow more capable and the cost of frontier-level performance continues
           to fall, transformative AI is approaching quickly. Navigating it well requires a coherent
           picture of where AGI is headed, one that integrates technical progress with the political
@@ -204,40 +201,42 @@ export default function StrategyGroup() {
           forecasting informed by scaling laws, threat modeling, and a tabletop wargame exercise,
           culminating in each fellow writing their own AGI takeoff scenario.
         </p>
-      </header>
-
+      }>
       <div className={styles.weeklyContent}>
         {weeklyContent.map((week, index) => (
           <section key={index} className={styles.weekSection}>
-            <p className={styles.weekNum}>Week {String(week.week).padStart(2, "0")}</p>
-            <h2 className={styles.weekTitle}>{week.title}</h2>
-            <p className={styles.weekDescription}>{week.description}</p>
-            {week.content.length > 0 ? (
-              <ul className={styles.contentList}>
-                {week.content.map((item, itemIndex) => (
-                  <li key={itemIndex} className={styles.contentItem}>
-                    {item.link ? (
-                      <a
-                        href={item.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={styles.contentLink}>
-                        {item.title}
-                      </a>
-                    ) : (
-                      <span className={styles.contentTitle}>{item.title}</span>
-                    )}
-                    <p className={styles.contentDescription}>{item.description}</p>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className={styles.noContent}>Content to be announced.</p>
-            )}
+            <div className={styles.weekIntro}>
+              <p className={styles.weekNum}>Week {String(week.week).padStart(2, "0")}</p>
+              <h2 className={styles.weekTitle}>{week.title}</h2>
+              <p className={styles.weekDescription}>{week.description}</p>
+            </div>
+            <div className={styles.weekBody}>
+              {week.content.length > 0 ? (
+                <ul className={styles.contentList}>
+                  {week.content.map((item, itemIndex) => (
+                    <li key={itemIndex} className={styles.contentItem}>
+                      {item.link ? (
+                        <a
+                          href={item.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={styles.contentLink}>
+                          {item.title}
+                        </a>
+                      ) : (
+                        <span className={styles.contentTitle}>{item.title}</span>
+                      )}
+                      <p className={styles.contentDescription}>{item.description}</p>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className={styles.noContent}>Readings to be announced.</p>
+              )}
+            </div>
           </section>
         ))}
       </div>
-      </div>
-    </div>
+    </PageLayout>
   );
 }
