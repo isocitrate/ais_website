@@ -160,7 +160,7 @@ export default function LeadershipSection() {
 
       <details className={styles.more}>
         <summary className={styles.moreSummary}>Advisors</summary>
-        <div className={styles.simpleGrid}>
+        <div className={`${styles.moreBody} ${styles.simpleGrid}`}>
           {advisors.map((member) => (
             <div key={member.memberName} className={styles.simpleCard}>
               <p className={styles.simpleName}>{member.memberName}</p>

@@ -3,7 +3,7 @@ import styles from "./page.module.css";
 import PageLayout from "@/app/ui/PageLayout";
 import EventsCalendar from "./EventsCalendar";
 import { GOOGLE_ADD_URL } from "./calendarConfig";
-import { getUpcomingEvents, formatEventShort } from "./upcomingEvents";
+import { getUpcomingEvents, getPastEvents, formatEventShort, formatEventDay } from "./upcomingEvents";
 
 export const metadata = {
   title: "Events - AI Safety Group @ UChicago XLab",
@@ -40,18 +40,19 @@ function EventRow({ event, isNext = false }) {
 }
 
 export default async function Events() {
-  const upcoming = await getUpcomingEvents();
+  const [upcoming, past] = await Promise.all([getUpcomingEvents(), getPastEvents()]);
 
   return (
     <PageLayout
       title="Events"
       lede={
         <p>
-          Check up-to-date events on our{" "}
+          We host speaker events, workshops, and discussions around AI safety. We also run regular
+          office hours where anyone can come talk to our student team. Subscribe to our{" "}
           <a href={GOOGLE_ADD_URL} target="_blank" rel="noopener noreferrer">
-            shared Google Calendar
-          </a>
-          . New events and changes will be automatically updated.
+            Google Calendar
+          </a>{" "}
+          to keep up to date.
         </p>
       }>
       {/* Upcoming first: what most visitors came for. The full calendar follows. */}
@@ -65,6 +66,29 @@ export default async function Events() {
           </div>
         ) : (
           <p className={styles.text}>No upcoming events are scheduled right now — check back soon.</p>
+        )}
+
+        {/* Past events fold right under the upcoming ones. */}
+        {past.length > 0 && (
+          <details className={styles.fold}>
+            <summary className={styles.foldSummary}>Past events</summary>
+            <ul className={`${styles.foldBody} ${styles.pastList}`}>
+              {past.map((event) => (
+                <li key={`${event.name}-${event.start.getTime()}`} className={styles.pastItem}>
+                  {event.href ? (
+                    <a href={event.href} target="_blank" rel="noopener noreferrer" className={styles.pastName}>
+                      {event.name}
+                    </a>
+                  ) : (
+                    <span className={styles.pastName}>{event.name}</span>
+                  )}
+                  <span className={styles.pastMeta}>
+                    {[formatEventDay(event), event.location].filter(Boolean).join(" · ")}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </details>
         )}
       </section>
 

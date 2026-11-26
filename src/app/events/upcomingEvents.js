@@ -94,13 +94,13 @@ export function formatEventShort(event) {
   return location ? `${text} @ ${location}` : text;
 }
 
-export async function getUpcomingEvents() {
+// All one-off calendar events (recurring sessions and office hours excluded).
+async function getCalendarEvents() {
   try {
     const response = await fetch(ICAL_URL, { next: { revalidate: EVENTS_REVALIDATE_SECONDS } });
     if (!response.ok) return [];
 
     const ics = unfoldIcs(await response.text());
-    const now = Date.now();
     const events = [];
 
     for (const block of ics.split("BEGIN:VEVENT").slice(1)) {
@@ -119,7 +119,7 @@ export async function getUpcomingEvents() {
       const location = decodeIcsText(fields.LOCATION);
       const start = parseIcsDate(fields.DTSTART, params.DTSTART);
       const end = parseIcsDate(fields.DTEND, params.DTEND);
-      if (!title || !start || start.date.getTime() < now) continue;
+      if (!title || !start) continue;
 
       const excludedText = `${title} ${description}`.toLowerCase();
       if (fields.RRULE || /\b(office hours?|coworking|co-working|weekly|recurring)\b/i.test(excludedText)) continue;
@@ -145,9 +145,44 @@ export async function getUpcomingEvents() {
       });
     }
 
-    return events.sort((a, b) => a.start - b.start);
+    return events;
   } catch (error) {
-    console.error("Unable to load upcoming events:", error);
+    console.error("Unable to load calendar events:", error);
     return [];
   }
+}
+
+// Events that haven't started yet, soonest first.
+export async function getUpcomingEvents() {
+  const now = Date.now();
+  return (await getCalendarEvents()).filter((e) => e.start.getTime() >= now).sort((a, b) => a.start - b.start);
+}
+
+// Events that have started, most recent first. Same-named events on consecutive
+// days (e.g. a two-day exercise) are merged into one entry spanning both days.
+export async function getPastEvents() {
+  const now = Date.now();
+  const past = (await getCalendarEvents()).filter((e) => e.start.getTime() < now).sort((a, b) => a.start - b.start);
+  const merged = [];
+  for (const e of past) {
+    const prev = merged[merged.length - 1];
+    if (prev && prev.name === e.name && e.start - (prev.lastStart || prev.start) <= 2 * 86400000) {
+      prev.lastStart = e.start;
+      continue;
+    }
+    merged.push({ ...e });
+  }
+  return merged.reverse();
+}
+
+// Past-event date line: "Thu 19 Nov 2026", or "Sat 14 – Sun 15 Nov 2026" for a merged multi-day entry.
+export function formatEventDay(event) {
+  const { start, allDay, lastStart } = event;
+  const day = (d) => `${fmt(d, allDay, { weekday: "short" })} ${fmt(d, allDay, { day: "numeric" })}`;
+  const tail = (d) => `${fmt(d, allDay, { month: "short" })} ${fmt(d, allDay, { year: "numeric" })}`;
+  if (lastStart) {
+    const sameMonth = tail(start) === tail(lastStart);
+    return sameMonth ? `${day(start)} – ${day(lastStart)} ${tail(lastStart)}` : `${day(start)} ${tail(start)} – ${day(lastStart)} ${tail(lastStart)}`;
+  }
+  return `${day(start)} ${tail(start)}`;
 }

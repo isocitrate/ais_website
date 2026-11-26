@@ -24,87 +24,17 @@
   font-weight: 500;
 }
 
-/* Click-to-open groups (past organizers, advisors). */
-/* Each row: a divider above and equal space above/below its title (the last
-   row also closes with a divider), so every title sits centred between rules. */
+/* Click-to-open rows: the shared fold (ui/layout.module.css). */
 .more {
-  margin-top: clamp(1.5rem, 2.6vw, 2.25rem);
-  border-top: 1px solid var(--hairline-dark);
-  padding: clamp(1rem, 1.6vw, 1.4rem) 0;
-}
-
-.more + .more {
-  margin-top: 0;
-}
-
-.more:last-of-type {
-  border-bottom: 1px solid var(--hairline-dark);
+  composes: fold from "../ui/layout.module.css";
 }
 
 .moreSummary {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1rem;
-  font-family: var(--sans);
-  font-size: clamp(1.25rem, 1.85vw, 1.75rem);
-  font-weight: 400;
-  line-height: 1.2;
-  color: var(--ink);
-  cursor: pointer;
-  list-style: none;
-  transition: color 0.2s ease, text-decoration-thickness 0.2s ease;
+  composes: foldSummary from "../ui/layout.module.css";
 }
 
-.moreSummary::-webkit-details-marker {
-  display: none;
-}
-
-/* "+" drawn as two bars; the vertical bar collapses into "−" when open. */
-.moreSummary {
-  position: relative;
-  padding-right: 2rem;
-}
-
-.moreSummary::before,
-.moreSummary::after {
-  content: "";
-  position: absolute;
-  right: 0.2rem;
-  top: 50%;
-  width: 0.75em;
-  height: 1.5px;
-  background: currentColor;
-  transition: transform 0.25s ease;
-}
-
-.moreSummary::after {
-  transform: rotate(90deg);
-}
-
-.more[open] > .moreSummary::after {
-  transform: rotate(0deg) scaleX(0);
-}
-
-.moreSummary:hover {
-  color: var(--maroon);
-}
-
-.more[open] > .moreBody,
-.more[open] > .simpleGrid {
-  margin-top: clamp(1rem, 1.8vw, 1.6rem);
-  animation: reveal 0.3s ease;
-}
-
-@keyframes reveal {
-  from {
-    opacity: 0;
-    transform: translateY(-6px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
+.moreBody {
+  composes: foldBody from "../ui/layout.module.css";
 }
 
 .inlineLink {
